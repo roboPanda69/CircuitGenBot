@@ -203,6 +203,24 @@ class RequirementModelTests(unittest.TestCase):
                 rule_id="RULE_I2C_001",
             )
 
+    def test_derived_requirement_cannot_derive_from_itself(self):
+        derived = DerivedRequirement(
+            id="DREQ_IF_001",
+            category="interface",
+            type="i2c_pullup",
+            description="The I2C bus shall provide suitable pull-up capability.",
+            target=Target(type="interface", id="TEMP_SENSOR_BUS"),
+            constraint={"kind": "text", "value": "Provide suitable pull-up capability."},
+            priority="required",
+            enforcement="hard",
+            origin=Origin(type="engineering_rule", source_id="RULE_I2C_001"),
+            confidence=0.9,
+            derived_from=["DREQ_IF_001"],
+            rule_id="RULE_I2C_001",
+        )
+        with self.assertRaises(ValidationError):
+            base_model(derived_requirements=[derived])
+
     def test_conflicts_reference_requirements(self):
         req1 = base_requirement("REQ_PWR_001")
         req2 = base_requirement("REQ_PWR_002").model_copy(

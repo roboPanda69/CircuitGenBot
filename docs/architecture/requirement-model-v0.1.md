@@ -37,4 +37,20 @@ Identity validation now covers the effective requirement namespace, assumptions,
 
 Unit normalization is a boundary utility for future ingestion. It normalizes known spellings and aliases such as `volts` to `V` and `milliamps` to `mA`, but it does not perform magnitude conversion or dimension checking. Unknown aliases raise an explicit normalization error.
 
-AI-related serialized enum values use lowercase machine-facing names such as `ai` and `ai_assumption`. The project still has no Requirement Interpreter, RequirementDraft, Ollama client, prompts, KiCad lookup, or circuit-generation logic.
+AI-related serialized enum values use lowercase machine-facing names such as `ai` and `ai_assumption`. KiCad lookup, circuit-generation logic, and later planning layers remain outside the requirement contract.
+
+## Milestone 2 Interpreter Boundary
+
+Milestone 2 adds the first `User Message -> RequirementModel` application layer. The LLM returns a typed draft contract, not canonical engineering state. Drafts are validated, units are normalized through the Milestone 1.1 unit boundary, and deterministic enrichment assigns IDs, provenance, defaults, verification expectations, and metadata before constructing a canonical `RequirementModel`.
+
+The LLM boundary is replaceable via `LLMClient`. `OllamaClient` is the first backend and uses the configured local model, currently `qwen-coder`, but domain models do not import or depend on Ollama.
+
+Follow-up messages use `RequirementChangeDraft` operations. Constraint replacements preserve requirement IDs, additions allocate new deterministic IDs, removals use the safe update path, and ambiguous edits should return open questions rather than guessed changes.
+
+Accepted interpreter results require meaningful extracted engineering intent. If initial extraction produces no requirements and no open questions, deterministic enrichment adds a generic blocking clarification question so the result cannot be accepted as a useful model.
+
+Follow-up questions are canonical state. When a change draft asks a new structured question, that enriched question is inserted through the safe update path into the new `RequirementModel` revision while existing open questions are preserved and question IDs remain sequential.
+
+The repair loop is bounded. Invalid LLM structured output can be sent back for correction, but retry exhaustion raises a typed interpreter error and never returns a partially valid canonical model.
+
+Deferred layers remain out of scope: architecture planning, engineering rules, component selection, Circuit IR, KiCad/SKiDL/SPICE generation, verification reports, repair planning, learning, and UI.

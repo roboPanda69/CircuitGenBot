@@ -31,6 +31,7 @@ class RequirementPatch:
     remove_requirement_ids: tuple[str, ...] = field(default_factory=tuple)
     add_assumptions: tuple[AssumptionInput, ...] = field(default_factory=tuple)
     remove_assumption_ids: tuple[str, ...] = field(default_factory=tuple)
+    add_open_questions: tuple[OpenQuestionInput, ...] = field(default_factory=tuple)
     update_open_questions: tuple[OpenQuestionInput, ...] = field(default_factory=tuple)
 
     @property
@@ -42,6 +43,7 @@ class RequirementPatch:
                 self.remove_requirement_ids,
                 self.add_assumptions,
                 self.remove_assumption_ids,
+                self.add_open_questions,
                 self.update_open_questions,
             )
         )
@@ -67,6 +69,7 @@ class RequirementUpdateService:
         self._remove_by_id(data["assumptions"], patch.remove_assumption_ids, "assumption")
         data["assumptions"].extend(self._dump_items(patch.add_assumptions))
 
+        data["open_questions"].extend(self._dump_items(patch.add_open_questions))
         self._replace_by_id(data["open_questions"], patch.update_open_questions, "open question")
 
         if patch.has_changes:
@@ -80,7 +83,11 @@ class RequirementUpdateService:
         return RequirementModel.model_validate(data)
 
     @staticmethod
-    def _dump_items(items: tuple[RequirementInput, ...] | tuple[AssumptionInput, ...]) -> list[dict[str, Any]]:
+    def _dump_items(
+        items: tuple[RequirementInput, ...]
+        | tuple[AssumptionInput, ...]
+        | tuple[OpenQuestionInput, ...],
+    ) -> list[dict[str, Any]]:
         dumped: list[dict[str, Any]] = []
         for item in items:
             if hasattr(item, "model_dump"):

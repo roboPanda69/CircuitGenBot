@@ -318,6 +318,8 @@ class RequirementModel(DomainModel):
 
         for derived in self.derived_requirements:
             for source_id in derived.derived_from:
+                if source_id == derived.id:
+                    raise ValueError(f"{derived.id} cannot derive from itself")
                 if source_id not in known_ids:
                     raise ValueError(f"{derived.id} derived from unknown requirement {source_id}")
 

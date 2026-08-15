@@ -11,7 +11,10 @@ class ConfigTests(unittest.TestCase):
             settings = load_settings()
 
         self.assertEqual(settings.llm_provider, "ollama")
+        self.assertEqual(settings.ollama_host, "http://localhost:11434")
+        self.assertEqual(settings.ollama_model, "qwen-coder")
         self.assertEqual(settings.ollama_model_name, "qwen-coder")
+        self.assertEqual(settings.llm_max_repair_attempts, 2)
         self.assertIsNone(settings.kicad9_footprint_dir)
         self.assertIsNone(settings.kicad9_symbol_dir)
 
@@ -21,7 +24,9 @@ class ConfigTests(unittest.TestCase):
             {
                 "KICAD9_FOOTPRINT_DIR": "C:/KiCad/9.0/share/kicad/footprints",
                 "KICAD9_SYMBOL_DIR": "C:/KiCad/9.0/share/kicad/symbols",
-                "OLLAMA_MODEL_NAME": "qwen-coder",
+                "OLLAMA_HOST": "http://127.0.0.1:11434",
+                "OLLAMA_MODEL": "qwen-coder",
+                "LLM_MAX_REPAIR_ATTEMPTS": "1",
             },
             clear=True,
         ):
@@ -29,9 +34,11 @@ class ConfigTests(unittest.TestCase):
 
         self.assertEqual(settings.kicad9_footprint_dir, "C:/KiCad/9.0/share/kicad/footprints")
         self.assertEqual(settings.kicad9_symbol_dir, "C:/KiCad/9.0/share/kicad/symbols")
+        self.assertEqual(settings.ollama_host, "http://127.0.0.1:11434")
+        self.assertEqual(settings.ollama_model, "qwen-coder")
         self.assertEqual(settings.ollama_model_name, "qwen-coder")
+        self.assertEqual(settings.llm_max_repair_attempts, 1)
 
 
 if __name__ == "__main__":
     unittest.main()
-

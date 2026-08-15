@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from pydantic import ValidationError
 
-from schematic_ai.domain.requirements.models import Origin, Requirement, Target
+from schematic_ai.domain.requirements.models import OpenQuestion, Origin, Requirement, Target
 from schematic_ai.domain.requirements.models import Relationship
 from schematic_ai.domain.requirements.updates import (
     RequirementPatch,
@@ -112,6 +112,42 @@ class RequirementUpdateServiceTests(unittest.TestCase):
                 RequirementPatch(add_requirements=(added_requirement(),)),
                 updated_at=datetime(2026, 8, 16),
             )
+
+    def test_add_open_questions_preserves_existing_questions_and_increments_revision(self):
+        original = base_model(
+            open_questions=[
+                OpenQuestion(
+                    id="Q_001",
+                    question="What output current is required?",
+                    reason="Output current was not provided.",
+                    related_requirement_ids=["REQ_PWR_001"],
+                    importance="high",
+                    blocking=True,
+                )
+            ]
+        )
+        service = RequirementUpdateService()
+
+        updated = service.apply_patch(
+            original,
+            RequirementPatch(
+                add_open_questions=(
+                    OpenQuestion(
+                        id="Q_002",
+                        question="What input range is required?",
+                        reason="Only a nominal input was provided.",
+                        related_requirement_ids=["REQ_PWR_001"],
+                        importance="high",
+                        blocking=True,
+                    ),
+                )
+            ),
+            updated_at=datetime(2026, 8, 16, tzinfo=timezone.utc),
+        )
+
+        self.assertEqual([question.id for question in original.open_questions], ["Q_001"])
+        self.assertEqual([question.id for question in updated.open_questions], ["Q_001", "Q_002"])
+        self.assertEqual(updated.revision, original.revision + 1)
 
 
 if __name__ == "__main__":
