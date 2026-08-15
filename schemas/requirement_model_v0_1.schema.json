@@ -1,0 +1,1245 @@
+{
+  "$defs": {
+    "Assumption": {
+      "additionalProperties": false,
+      "properties": {
+        "affects_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Affects Requirements",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "impact": {
+          "$ref": "#/$defs/Impact"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "string"
+        },
+        "requires_confirmation": {
+          "default": false,
+          "title": "Requires Confirmation",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/AssumptionSource"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "parameter",
+        "value",
+        "source",
+        "confidence",
+        "impact"
+      ],
+      "title": "Assumption",
+      "type": "object"
+    },
+    "AssumptionSource": {
+      "enum": [
+        "user",
+        "ai",
+        "engineering_rule",
+        "default",
+        "datasheet",
+        "imported"
+      ],
+      "title": "AssumptionSource",
+      "type": "string"
+    },
+    "BooleanConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanConstraint",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanConstraint",
+              "enum": "#/$defs/EnumConstraint",
+              "enum_preference": "#/$defs/EnumPreferenceConstraint",
+              "exact": "#/$defs/ExactConstraint",
+              "maximum": "#/$defs/MaximumConstraint",
+              "minimum": "#/$defs/MinimumConstraint",
+              "nominal": "#/$defs/NominalConstraint",
+              "nominal_with_tolerance": "#/$defs/NominalWithToleranceConstraint",
+              "range": "#/$defs/RangeConstraint",
+              "text": "#/$defs/TextConstraint"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExactConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalConstraint"
+            },
+            {
+              "$ref": "#/$defs/MinimumConstraint"
+            },
+            {
+              "$ref": "#/$defs/MaximumConstraint"
+            },
+            {
+              "$ref": "#/$defs/RangeConstraint"
+            },
+            {
+              "$ref": "#/$defs/BooleanConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumPreferenceConstraint"
+            },
+            {
+              "$ref": "#/$defs/TextConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalWithToleranceConstraint"
+            }
+          ],
+          "title": "Constraint"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parameter",
+        "constraint"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "Conflict": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "requirement_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "resolution_status": {
+          "$ref": "#/$defs/ConflictResolutionStatus",
+          "default": "unresolved"
+        },
+        "severity": {
+          "$ref": "#/$defs/ConflictSeverity"
+        },
+        "type": {
+          "$ref": "#/$defs/ConflictType"
+        }
+      },
+      "required": [
+        "id",
+        "requirement_ids",
+        "type",
+        "description",
+        "severity"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "ConflictResolutionStatus": {
+      "enum": [
+        "unresolved",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "ConflictResolutionStatus",
+      "type": "string"
+    },
+    "ConflictSeverity": {
+      "enum": [
+        "info",
+        "warning",
+        "blocking"
+      ],
+      "title": "ConflictSeverity",
+      "type": "string"
+    },
+    "ConflictType": {
+      "enum": [
+        "mutually_incompatible",
+        "ambiguous",
+        "resource_contention",
+        "needs_human_decision"
+      ],
+      "title": "ConflictType",
+      "type": "string"
+    },
+    "DerivedRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/RequirementCategory"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "constraint": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanConstraint",
+              "enum": "#/$defs/EnumConstraint",
+              "enum_preference": "#/$defs/EnumPreferenceConstraint",
+              "exact": "#/$defs/ExactConstraint",
+              "maximum": "#/$defs/MaximumConstraint",
+              "minimum": "#/$defs/MinimumConstraint",
+              "nominal": "#/$defs/NominalConstraint",
+              "nominal_with_tolerance": "#/$defs/NominalWithToleranceConstraint",
+              "range": "#/$defs/RangeConstraint",
+              "text": "#/$defs/TextConstraint"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExactConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalConstraint"
+            },
+            {
+              "$ref": "#/$defs/MinimumConstraint"
+            },
+            {
+              "$ref": "#/$defs/MaximumConstraint"
+            },
+            {
+              "$ref": "#/$defs/RangeConstraint"
+            },
+            {
+              "$ref": "#/$defs/BooleanConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumPreferenceConstraint"
+            },
+            {
+              "$ref": "#/$defs/TextConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalWithToleranceConstraint"
+            }
+          ],
+          "title": "Constraint"
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/Relationship"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "derived_from": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Derived From",
+          "type": "array"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "enforcement": {
+          "$ref": "#/$defs/Enforcement"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/Origin"
+        },
+        "priority": {
+          "$ref": "#/$defs/RequirementPriority"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "derived",
+          "default": "derived",
+          "title": "Status",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "verification": {
+          "$ref": "#/$defs/VerificationExpectation"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "type",
+        "description",
+        "target",
+        "constraint",
+        "priority",
+        "enforcement",
+        "origin",
+        "confidence",
+        "derived_from",
+        "rule_id"
+      ],
+      "title": "DerivedRequirement",
+      "type": "object"
+    },
+    "Enforcement": {
+      "enum": [
+        "hard",
+        "soft",
+        "advisory"
+      ],
+      "title": "Enforcement",
+      "type": "string"
+    },
+    "EnumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed",
+          "type": "array"
+        },
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "title": "EnumConstraint",
+      "type": "object"
+    },
+    "EnumPreferenceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum_preference",
+          "default": "enum_preference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "preferred": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Preferred",
+          "type": "array"
+        }
+      },
+      "required": [
+        "preferred"
+      ],
+      "title": "EnumPreferenceConstraint",
+      "type": "object"
+    },
+    "ExactConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exact",
+          "default": "exact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "ExactConstraint",
+      "type": "object"
+    },
+    "Impact": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Impact",
+      "type": "string"
+    },
+    "MaximumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "maximum",
+          "default": "maximum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MaximumConstraint",
+      "type": "object"
+    },
+    "Metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    },
+    "MinimumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "minimum",
+          "default": "minimum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MinimumConstraint",
+      "type": "object"
+    },
+    "NominalConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal",
+          "default": "nominal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "NominalConstraint",
+      "type": "object"
+    },
+    "NominalWithToleranceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal_with_tolerance",
+          "default": "nominal_with_tolerance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "nominal": {
+          "title": "Nominal",
+          "type": "number"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/Tolerance"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nominal",
+        "unit",
+        "tolerance"
+      ],
+      "title": "NominalWithToleranceConstraint",
+      "type": "object"
+    },
+    "OpenQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "importance": {
+          "$ref": "#/$defs/QuestionImportance"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "related_requirement_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Requirement Ids",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/QuestionStatus",
+          "default": "open"
+        },
+        "suggested_answers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Answers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "question",
+        "reason",
+        "importance",
+        "blocking"
+      ],
+      "title": "OpenQuestion",
+      "type": "object"
+    },
+    "Origin": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "type": {
+          "$ref": "#/$defs/OriginType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Origin",
+      "type": "object"
+    },
+    "OriginType": {
+      "enum": [
+        "user",
+        "derived",
+        "engineering_rule",
+        "datasheet",
+        "default",
+        "ai_assumption",
+        "imported"
+      ],
+      "title": "OriginType",
+      "type": "string"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuestionImportance": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "QuestionImportance",
+      "type": "string"
+    },
+    "QuestionStatus": {
+      "enum": [
+        "open",
+        "answered",
+        "dismissed"
+      ],
+      "title": "QuestionStatus",
+      "type": "string"
+    },
+    "RangeConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "range",
+          "default": "range",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "number"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum",
+        "unit"
+      ],
+      "title": "RangeConstraint",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/RelationshipType"
+        }
+      },
+      "required": [
+        "type",
+        "requirement_id"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "RelationshipType": {
+      "enum": [
+        "derived_from",
+        "requires",
+        "conflicts_with",
+        "refines",
+        "supersedes"
+      ],
+      "title": "RelationshipType",
+      "type": "string"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/RequirementCategory"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "constraint": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanConstraint",
+              "enum": "#/$defs/EnumConstraint",
+              "enum_preference": "#/$defs/EnumPreferenceConstraint",
+              "exact": "#/$defs/ExactConstraint",
+              "maximum": "#/$defs/MaximumConstraint",
+              "minimum": "#/$defs/MinimumConstraint",
+              "nominal": "#/$defs/NominalConstraint",
+              "nominal_with_tolerance": "#/$defs/NominalWithToleranceConstraint",
+              "range": "#/$defs/RangeConstraint",
+              "text": "#/$defs/TextConstraint"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExactConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalConstraint"
+            },
+            {
+              "$ref": "#/$defs/MinimumConstraint"
+            },
+            {
+              "$ref": "#/$defs/MaximumConstraint"
+            },
+            {
+              "$ref": "#/$defs/RangeConstraint"
+            },
+            {
+              "$ref": "#/$defs/BooleanConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumPreferenceConstraint"
+            },
+            {
+              "$ref": "#/$defs/TextConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalWithToleranceConstraint"
+            }
+          ],
+          "title": "Constraint"
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/Relationship"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "enforcement": {
+          "$ref": "#/$defs/Enforcement"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/Origin"
+        },
+        "priority": {
+          "$ref": "#/$defs/RequirementPriority"
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementStatus"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "verification": {
+          "$ref": "#/$defs/VerificationExpectation"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "type",
+        "description",
+        "target",
+        "constraint",
+        "priority",
+        "enforcement",
+        "origin",
+        "status",
+        "confidence"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "RequirementCategory": {
+      "enum": [
+        "power",
+        "functional",
+        "interface",
+        "protection",
+        "electrical",
+        "performance",
+        "environmental",
+        "physical",
+        "component",
+        "manufacturing",
+        "cost",
+        "reliability",
+        "safety",
+        "user_preference",
+        "other"
+      ],
+      "title": "RequirementCategory",
+      "type": "string"
+    },
+    "RequirementPriority": {
+      "enum": [
+        "required",
+        "recommended",
+        "optional",
+        "preference"
+      ],
+      "title": "RequirementPriority",
+      "type": "string"
+    },
+    "RequirementStatus": {
+      "enum": [
+        "candidate",
+        "needs_clarification",
+        "confirmed",
+        "derived",
+        "superseded",
+        "rejected"
+      ],
+      "title": "RequirementStatus",
+      "type": "string"
+    },
+    "SystemInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "domain": {
+          "default": "general_electronics",
+          "title": "Domain",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "title": "SystemInfo",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "type": {
+          "$ref": "#/$defs/TargetType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Target",
+      "type": "object"
+    },
+    "TargetType": {
+      "enum": [
+        "system",
+        "power_input",
+        "power_output",
+        "power_rail",
+        "interface",
+        "functional_block",
+        "connector",
+        "component",
+        "signal",
+        "logical"
+      ],
+      "title": "TargetType",
+      "type": "string"
+    },
+    "TextConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextConstraint",
+      "type": "object"
+    },
+    "Tolerance": {
+      "additionalProperties": false,
+      "properties": {
+        "minus": {
+          "minimum": 0,
+          "title": "Minus",
+          "type": "number"
+        },
+        "plus": {
+          "minimum": 0,
+          "title": "Plus",
+          "type": "number"
+        },
+        "type": {
+          "enum": [
+            "percent",
+            "absolute"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type",
+        "minus",
+        "plus"
+      ],
+      "title": "Tolerance",
+      "type": "object"
+    },
+    "VerificationAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "all_required_methods_must_pass": {
+          "default": false,
+          "title": "All Required Methods Must Pass",
+          "type": "boolean"
+        }
+      },
+      "title": "VerificationAcceptance",
+      "type": "object"
+    },
+    "VerificationExpectation": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance": {
+          "$ref": "#/$defs/VerificationAcceptance"
+        },
+        "preferred_methods": {
+          "items": {
+            "$ref": "#/$defs/VerificationMethod"
+          },
+          "title": "Preferred Methods",
+          "type": "array"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "title": "VerificationExpectation",
+      "type": "object"
+    },
+    "VerificationMethod": {
+      "enum": [
+        "connectivity",
+        "erc",
+        "datasheet_constraint",
+        "engineering_rule",
+        "electrical_calculation",
+        "simulation",
+        "manual_review",
+        "hardware_test",
+        "visual_inspection",
+        "not_yet_defined"
+      ],
+      "title": "VerificationMethod",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "assumptions": {
+      "items": {
+        "$ref": "#/$defs/Assumption"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "conflicts": {
+      "items": {
+        "$ref": "#/$defs/Conflict"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "derived_requirements": {
+      "items": {
+        "$ref": "#/$defs/DerivedRequirement"
+      },
+      "title": "Derived Requirements",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "open_questions": {
+      "items": {
+        "$ref": "#/$defs/OpenQuestion"
+      },
+      "title": "Open Questions",
+      "type": "array"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "requirement_set_id": {
+      "title": "Requirement Set Id",
+      "type": "string"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/Requirement"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "system": {
+      "$ref": "#/$defs/SystemInfo"
+    }
+  },
+  "required": [
+    "requirement_set_id",
+    "project_id",
+    "revision",
+    "system",
+    "metadata"
+  ],
+  "title": "RequirementModel",
+  "type": "object"
+}

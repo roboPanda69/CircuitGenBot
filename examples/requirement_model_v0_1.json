@@ -1,0 +1,361 @@
+{
+  "schema_version": "0.1",
+  "requirement_set_id": "RQS_0001",
+  "project_id": "PRJ_0001",
+  "revision": 1,
+  "system": {
+    "name": "Temperature Sensor Board",
+    "description": "12 V powered temperature sensing circuit",
+    "domain": "general_electronics"
+  },
+  "requirements": [
+    {
+      "id": "REQ_PWR_001",
+      "category": "power",
+      "type": "input_voltage",
+      "description": "The circuit shall accept a nominal 12 V DC input.",
+      "target": {
+        "type": "power_input",
+        "id": "VIN"
+      },
+      "constraint": {
+        "kind": "nominal",
+        "value": 12,
+        "unit": "V"
+      },
+      "conditions": [],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [],
+      "group_id": "REQGRP_PWR_IN_01",
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "datasheet_constraint",
+          "electrical_calculation"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "power"
+      ]
+    },
+    {
+      "id": "REQ_PWR_002",
+      "category": "power",
+      "type": "output_voltage",
+      "description": "The circuit shall provide a nominal 5 V output.",
+      "target": {
+        "type": "power_output",
+        "id": "VOUT_MAIN"
+      },
+      "constraint": {
+        "kind": "nominal",
+        "value": 5,
+        "unit": "V"
+      },
+      "conditions": [
+        {
+          "parameter": "load_current",
+          "constraint": {
+            "kind": "range",
+            "minimum": 0,
+            "maximum": 2,
+            "unit": "A"
+          }
+        }
+      ],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [
+        {
+          "type": "requires",
+          "requirement_id": "REQ_PWR_001"
+        }
+      ],
+      "group_id": "REQGRP_PWR_OUT_01",
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "electrical_calculation",
+          "simulation"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "power"
+      ]
+    },
+    {
+      "id": "REQ_PWR_003",
+      "category": "power",
+      "type": "output_current",
+      "description": "The 5 V output shall supply at least 2 A.",
+      "target": {
+        "type": "power_output",
+        "id": "VOUT_MAIN"
+      },
+      "constraint": {
+        "kind": "minimum",
+        "value": 2,
+        "unit": "A"
+      },
+      "conditions": [],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [
+        {
+          "type": "requires",
+          "requirement_id": "REQ_PWR_002"
+        }
+      ],
+      "group_id": "REQGRP_PWR_OUT_01",
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "electrical_calculation",
+          "simulation"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "power"
+      ]
+    },
+    {
+      "id": "REQ_PROT_001",
+      "category": "protection",
+      "type": "reverse_polarity_protection",
+      "description": "The circuit shall include reverse-polarity protection.",
+      "target": {
+        "type": "power_input",
+        "id": "VIN"
+      },
+      "constraint": {
+        "kind": "boolean",
+        "value": true
+      },
+      "conditions": [],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [],
+      "group_id": null,
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "erc",
+          "manual_review"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "protection"
+      ]
+    },
+    {
+      "id": "REQ_IF_001",
+      "category": "interface",
+      "type": "communication_interface",
+      "description": "The temperature sensor shall use an I2C interface.",
+      "target": {
+        "type": "interface",
+        "id": "TEMP_SENSOR_BUS"
+      },
+      "constraint": {
+        "kind": "enum",
+        "allowed": [
+          "I2C"
+        ]
+      },
+      "conditions": [],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [],
+      "group_id": null,
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "connectivity",
+          "erc",
+          "manual_review"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "i2c",
+        "temperature"
+      ]
+    },
+    {
+      "id": "REQ_PREF_001",
+      "category": "user_preference",
+      "type": "preferred_manufacturer",
+      "description": "Prefer Texas Instruments parts if possible.",
+      "target": {
+        "type": "component",
+        "id": "preferred_parts"
+      },
+      "constraint": {
+        "kind": "enum_preference",
+        "preferred": [
+          "Texas Instruments"
+        ]
+      },
+      "conditions": [],
+      "priority": "preference",
+      "enforcement": "soft",
+      "origin": {
+        "type": "user",
+        "source_id": "MSG_001"
+      },
+      "status": "confirmed",
+      "confidence": 1.0,
+      "dependencies": [],
+      "group_id": null,
+      "verification": {
+        "required": false,
+        "preferred_methods": [
+          "datasheet_constraint",
+          "manual_review"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "preference"
+      ]
+    }
+  ],
+  "derived_requirements": [
+    {
+      "id": "DREQ_IF_001",
+      "category": "interface",
+      "type": "i2c_pullup",
+      "description": "The I2C bus shall provide suitable pull-up capability.",
+      "target": {
+        "type": "interface",
+        "id": "TEMP_SENSOR_BUS"
+      },
+      "constraint": {
+        "kind": "text",
+        "value": "Provide pull-up capability compatible with the selected I2C voltage and bus capacitance."
+      },
+      "conditions": [],
+      "priority": "required",
+      "enforcement": "hard",
+      "origin": {
+        "type": "engineering_rule",
+        "source_id": "RULE_I2C_001"
+      },
+      "status": "derived",
+      "confidence": 0.9,
+      "dependencies": [
+        {
+          "type": "derived_from",
+          "requirement_id": "REQ_IF_001"
+        }
+      ],
+      "group_id": null,
+      "verification": {
+        "required": true,
+        "preferred_methods": [
+          "engineering_rule",
+          "electrical_calculation"
+        ],
+        "acceptance": {
+          "all_required_methods_must_pass": false
+        }
+      },
+      "tags": [
+        "i2c"
+      ],
+      "derived_from": [
+        "REQ_IF_001"
+      ],
+      "rule_id": "RULE_I2C_001"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM_001",
+      "description": "Ambient temperature assumed to be 25 degC for preliminary thermal calculations.",
+      "parameter": "ambient_temperature",
+      "value": {
+        "value": 25,
+        "unit": "degC"
+      },
+      "source": "ai",
+      "confidence": 0.5,
+      "impact": "medium",
+      "requires_confirmation": false,
+      "affects_requirements": [
+        "REQ_PWR_003"
+      ]
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "Q_001",
+      "question": "What input voltage range must the nominal 12 V input tolerate?",
+      "reason": "Only a nominal 12 V input was provided.",
+      "related_requirement_ids": [
+        "REQ_PWR_001"
+      ],
+      "importance": "high",
+      "blocking": true,
+      "suggested_answers": [
+        "11-13 V",
+        "9-16 V",
+        "Automotive 12 V environment"
+      ],
+      "status": "open"
+    }
+  ],
+  "conflicts": [],
+  "metadata": {
+    "created_at": "2026-08-15T00:00:00+05:30",
+    "updated_at": "2026-08-15T00:00:00+05:30",
+    "created_by": "requirement_interpreter"
+  }
+}
