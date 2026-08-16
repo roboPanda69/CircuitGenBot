@@ -14,6 +14,8 @@ System v0.2 current scope:
 
 Milestone 3: `DesignPlan v0.1`
 
+Milestone 4: `Architecture Planner v0.1`
+
 Implemented now:
 
 - Strongly typed Python domain models for requirements.
@@ -28,6 +30,8 @@ Implemented now:
 - Replaceable LLM client boundary with an Ollama adapter for local `qwen-coder`.
 - Strongly typed `DesignPlan v0.1` models for functional architecture.
 - Contextual validation that checks DesignPlan traceability against a source RequirementModel revision.
+- An architecture planning application service that asks an LLM for a temporary `DesignPlanDraft`, then deterministically enriches it into a canonical `DesignPlan`.
+- Basic replanning support that preserves the existing design plan identity and stable functional block identities where practical.
 
 Not implemented yet:
 
@@ -97,7 +101,7 @@ Unit normalization is an explicit boundary for future ingestion layers. `normali
 
 Identity and reference integrity are enforced across requirements, assumptions, open questions, and conflicts. Direct self-dependencies, duplicate enum choices, duplicate conflict members, invalid references, and metadata where `updated_at` precedes `created_at` are rejected.
 
-The LLM integration is limited to requirement interpretation. It does not perform architecture planning, component selection, KiCad lookup, circuit generation, or verification.
+The LLM integration is limited to requirement interpretation and architecture draft proposal. It does not perform component selection, KiCad lookup, circuit generation, or verification.
 
 ## Milestone 2 Interpreter
 
@@ -154,6 +158,41 @@ Generate its schema:
 $env:PYTHONPATH='src'
 python scripts/export_design_plan_schema.py
 ```
+
+## Milestone 4 Architecture Planner
+
+`ArchitecturePlanner` is the first application service that bridges `RequirementModel` to `DesignPlan`. It preserves the frozen boundary:
+
+```text
+RequirementModel
+  -> LLMClient proposes DesignPlanDraft JSON
+  -> DesignPlanEnricher creates canonical DesignPlan
+  -> DesignPlan contextual validation against RequirementModel
+  -> direct semantic consistency checks
+```
+
+The draft is temporary and LLM-facing. It uses draft references such as `b_converter`, `vout_main`, or even arbitrary labels such as `TPS54331`; canonical IDs such as `BLOCK_PWR_001`, `PWRDOM_001`, `PORT_PWR_001`, `CONN_001`, and `MAP_001` are assigned only by deterministic code and do not derive from draft IDs.
+
+Canonical planner-owned text is also deterministic. Raw LLM names, purposes, rationales, descriptions, assumptions, and open-decision prose are not copied unchanged into canonical `DesignPlan` state; architecture-level text is generated from structured fields such as block type, topology class, power-domain role, interface type, architecture choice, and mapped requirements.
+
+Milestone 4 performs small direct semantic checks after normal DesignPlan validation. It currently checks mapped voltage facts and mapped interface protocol facts, for example rejecting a 5 V requirement mapped to a 3.3 V power domain or an I2C requirement mapped to an SPI interface. This is not electrical verification and does not prove output current capability, component feasibility, thermal behavior, signal integrity, or implementation correctness.
+
+Planner result statuses:
+
+- `accepted`: a valid `DesignPlan` is available.
+- `needs_input`: a blocking requirement question exists, no active hard requirements exist, or the enriched plan contains a blocking open architecture decision.
+- `failed`: the LLM draft cannot be parsed, repaired, enriched, or validated.
+
+Missing WHAT the user requires remains a `RequirementModel.open_questions` issue. Missing HOW to structure the architecture is represented as `DesignPlan.open_decisions`. Non-blocking open architecture decisions can still produce an accepted plan; blocking ones return `needs_input` with the draft-enriched plan attached.
+
+Run the fake-LLM planner example:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/example_architecture_planner.py
+```
+
+The example and tests do not require Ollama. Production usage can pass any object implementing the existing `LLMClient.generate_structured(...)` boundary, including the configured local Ollama `qwen-coder` client.
 
 ## Core Principle
 
