@@ -10,6 +10,10 @@ Milestone 1.1: `RequirementModel Contract Hardening`
 
 Milestone 2: `Requirement Interpreter v0.1`
 
+System v0.2 current scope:
+
+Milestone 3: `DesignPlan v0.1`
+
 Implemented now:
 
 - Strongly typed Python domain models for requirements.
@@ -22,6 +26,8 @@ Implemented now:
 - Stronger identity, reference, enum, and metadata validation.
 - A programmatic requirement interpreter that converts LLM structured drafts into validated canonical `RequirementModel` instances.
 - Replaceable LLM client boundary with an Ollama adapter for local `qwen-coder`.
+- Strongly typed `DesignPlan v0.1` models for functional architecture.
+- Contextual validation that checks DesignPlan traceability against a source RequirementModel revision.
 
 Not implemented yet:
 
@@ -122,6 +128,32 @@ python scripts/test_ollama_requirement_interpreter.py
 ```
 
 This requires Ollama to be running locally with the configured model available.
+
+## Milestone 3 DesignPlan
+
+`RequirementModel` says what the electronic system must accomplish. `DesignPlan` says what functional architecture is intended to accomplish it. Future `CircuitIR` will say how that architecture is electrically implemented.
+
+`DesignPlan v0.1` can represent functional blocks, logical ports, block connections, power domains, interfaces, requirement mappings, architecture decisions, design assumptions, and open architecture decisions. It may use a controlled architectural `topology_class` such as `switching_step_down`, but it must not choose specific parts, symbols, footprints, pins, electrical nets, resistor values, capacitor values, or SPICE models.
+
+Structured architecture choices use controlled vocabularies too. `ArchitectureDecision.choice` and `OpenArchitectureDecision.options[]` can contain choices such as `switching_step_down`, `direct_interface`, or `interface_bridge`, but not component names, MPNs, values, GPIO pins, nets, KiCad symbols, or footprints.
+
+Traceability is plan-level: `requirement_mappings[]` is the authoritative structure. A contextual validator checks a `DesignPlan` against the referenced `RequirementModel` and requires every active hard requirement to have an explicit disposition. Active means hard requirements except `rejected` or `superseded`; `mapped`, `partially_mapped`, `unresolved`, and `not_applicable` all count as explicit v0.1 dispositions.
+
+Missing WHAT the user requires remains a `RequirementModel.open_questions` concern. Missing HOW the architecture should proceed belongs in `DesignPlan.open_decisions`.
+
+Validate the DesignPlan example:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/validate_design_plan_example.py
+```
+
+Generate its schema:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/export_design_plan_schema.py
+```
 
 ## Core Principle
 

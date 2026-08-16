@@ -1,0 +1,374 @@
+{
+  "schema_version": "0.1",
+  "design_plan_id": "DPLAN_0001",
+  "project_id": "PRJ_0001",
+  "revision": 1,
+  "source_requirement_set": {
+    "requirement_set_id": "RQS_0001",
+    "revision": 1
+  },
+  "functional_blocks": [
+    {
+      "block_id": "BLOCK_INPUT_001",
+      "type": "power_input",
+      "name": "Input Power Interface",
+      "purpose": "Accept nominal 12 V input power from the external source.",
+      "topology_class": null,
+      "inputs": [
+        {
+          "port_id": "PORT_INPUT_RAW_IN",
+          "name": "raw_input_power",
+          "kind": "power",
+          "direction": "input",
+          "power_domain": "PWRDOM_VIN_RAW",
+          "interface_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "PORT_INPUT_RAW_OUT",
+          "name": "raw_input_power_out",
+          "kind": "power",
+          "direction": "output",
+          "power_domain": "PWRDOM_VIN_RAW",
+          "interface_id": null
+        }
+      ],
+      "status": "planned"
+    },
+    {
+      "block_id": "BLOCK_PROT_001",
+      "type": "power_protection",
+      "name": "Reverse Polarity Protection",
+      "purpose": "Protect downstream power conversion from reversed input polarity.",
+      "topology_class": "non_isolated_power_conversion",
+      "inputs": [
+        {
+          "port_id": "PORT_PROT_IN",
+          "name": "raw_input_power",
+          "kind": "power",
+          "direction": "input",
+          "power_domain": "PWRDOM_VIN_RAW",
+          "interface_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "PORT_PROT_OUT",
+          "name": "protected_input_power",
+          "kind": "power",
+          "direction": "output",
+          "power_domain": "PWRDOM_VIN_PROTECTED",
+          "interface_id": null
+        }
+      ],
+      "status": "planned"
+    },
+    {
+      "block_id": "BLOCK_PWR_001",
+      "type": "power_conversion",
+      "name": "Main 5 V Power Conversion",
+      "purpose": "Convert protected input power to the regulated 5 V output rail.",
+      "topology_class": "switching_step_down",
+      "inputs": [
+        {
+          "port_id": "PORT_PWR_IN",
+          "name": "protected_input_power",
+          "kind": "power",
+          "direction": "input",
+          "power_domain": "PWRDOM_VIN_PROTECTED",
+          "interface_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "PORT_PWR_OUT",
+          "name": "regulated_5v_power",
+          "kind": "power",
+          "direction": "output",
+          "power_domain": "PWRDOM_5V",
+          "interface_id": null
+        }
+      ],
+      "status": "planned"
+    },
+    {
+      "block_id": "BLOCK_SENSOR_001",
+      "type": "sensor",
+      "name": "Temperature Sensing",
+      "purpose": "Provide temperature sensing over the logical I2C interface.",
+      "topology_class": "direct_interface",
+      "inputs": [
+        {
+          "port_id": "PORT_SENSOR_PWR",
+          "name": "sensor_power",
+          "kind": "power",
+          "direction": "input",
+          "power_domain": "PWRDOM_5V",
+          "interface_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "PORT_SENSOR_I2C",
+          "name": "sensor_bus",
+          "kind": "communication",
+          "direction": "bidirectional",
+          "power_domain": "PWRDOM_5V",
+          "interface_id": "IF_I2C_001"
+        }
+      ],
+      "status": "planned"
+    },
+    {
+      "block_id": "BLOCK_HOST_IF_001",
+      "type": "communication",
+      "name": "Host I2C Interface",
+      "purpose": "Expose the temperature sensor bus to a host connection.",
+      "topology_class": "direct_interface",
+      "inputs": [],
+      "outputs": [
+        {
+          "port_id": "PORT_HOST_I2C",
+          "name": "host_sensor_bus",
+          "kind": "communication",
+          "direction": "bidirectional",
+          "power_domain": "PWRDOM_5V",
+          "interface_id": "IF_I2C_001"
+        }
+      ],
+      "status": "planned"
+    }
+  ],
+  "block_connections": [
+    {
+      "connection_id": "CONN_001",
+      "source": {
+        "block_id": "BLOCK_INPUT_001",
+        "port_id": "PORT_INPUT_RAW_OUT"
+      },
+      "target": {
+        "block_id": "BLOCK_PROT_001",
+        "port_id": "PORT_PROT_IN"
+      },
+      "kind": "power",
+      "description": "Raw input power feeds the reverse-polarity protection stage."
+    },
+    {
+      "connection_id": "CONN_002",
+      "source": {
+        "block_id": "BLOCK_PROT_001",
+        "port_id": "PORT_PROT_OUT"
+      },
+      "target": {
+        "block_id": "BLOCK_PWR_001",
+        "port_id": "PORT_PWR_IN"
+      },
+      "kind": "power",
+      "description": "Protected input power feeds the main power conversion block."
+    },
+    {
+      "connection_id": "CONN_003",
+      "source": {
+        "block_id": "BLOCK_PWR_001",
+        "port_id": "PORT_PWR_OUT"
+      },
+      "target": {
+        "block_id": "BLOCK_SENSOR_001",
+        "port_id": "PORT_SENSOR_PWR"
+      },
+      "kind": "power",
+      "description": "The regulated 5 V domain powers the temperature sensing block."
+    }
+  ],
+  "power_domains": [
+    {
+      "power_domain_id": "PWRDOM_VIN_RAW",
+      "name": "Raw Input Power",
+      "role": "input",
+      "voltage": {
+        "kind": "nominal",
+        "value": 12,
+        "unit": "V"
+      },
+      "source_block": "BLOCK_INPUT_001",
+      "consumer_blocks": [
+        "BLOCK_PROT_001"
+      ]
+    },
+    {
+      "power_domain_id": "PWRDOM_VIN_PROTECTED",
+      "name": "Protected Input Power",
+      "role": "protected_input",
+      "voltage": {
+        "kind": "nominal",
+        "value": 12,
+        "unit": "V"
+      },
+      "source_block": "BLOCK_PROT_001",
+      "consumer_blocks": [
+        "BLOCK_PWR_001"
+      ]
+    },
+    {
+      "power_domain_id": "PWRDOM_5V",
+      "name": "5 V Main Rail",
+      "role": "regulated_output",
+      "voltage": {
+        "kind": "nominal",
+        "value": 5,
+        "unit": "V"
+      },
+      "source_block": "BLOCK_PWR_001",
+      "consumer_blocks": [
+        "BLOCK_SENSOR_001",
+        "BLOCK_HOST_IF_001"
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "interface_id": "IF_I2C_001",
+      "type": "i2c",
+      "name": "Temperature Sensor Bus",
+      "participants": [
+        "BLOCK_SENSOR_001",
+        "BLOCK_HOST_IF_001"
+      ],
+      "direction": "bidirectional",
+      "power_domain": "PWRDOM_5V"
+    }
+  ],
+  "requirement_mappings": [
+    {
+      "mapping_id": "MAP_001",
+      "requirement_id": "REQ_PWR_001",
+      "implemented_by": [
+        {
+          "type": "functional_block",
+          "id": "BLOCK_INPUT_001"
+        },
+        {
+          "type": "power_domain",
+          "id": "PWRDOM_VIN_RAW"
+        }
+      ],
+      "status": "mapped"
+    },
+    {
+      "mapping_id": "MAP_002",
+      "requirement_id": "REQ_PROT_001",
+      "implemented_by": [
+        {
+          "type": "functional_block",
+          "id": "BLOCK_PROT_001"
+        }
+      ],
+      "status": "mapped"
+    },
+    {
+      "mapping_id": "MAP_003",
+      "requirement_id": "REQ_PWR_002",
+      "implemented_by": [
+        {
+          "type": "functional_block",
+          "id": "BLOCK_PWR_001"
+        },
+        {
+          "type": "power_domain",
+          "id": "PWRDOM_5V"
+        }
+      ],
+      "status": "mapped"
+    },
+    {
+      "mapping_id": "MAP_004",
+      "requirement_id": "REQ_PWR_003",
+      "implemented_by": [
+        {
+          "type": "functional_block",
+          "id": "BLOCK_PWR_001"
+        },
+        {
+          "type": "power_domain",
+          "id": "PWRDOM_5V"
+        }
+      ],
+      "status": "mapped"
+    },
+    {
+      "mapping_id": "MAP_005",
+      "requirement_id": "REQ_IF_001",
+      "implemented_by": [
+        {
+          "type": "functional_block",
+          "id": "BLOCK_SENSOR_001"
+        },
+        {
+          "type": "interface",
+          "id": "IF_I2C_001"
+        }
+      ],
+      "status": "mapped"
+    },
+    {
+      "mapping_id": "MAP_006",
+      "requirement_id": "DREQ_IF_001",
+      "implemented_by": [],
+      "status": "unresolved"
+    }
+  ],
+  "architecture_decisions": [
+    {
+      "decision_id": "DEC_001",
+      "type": "topology_choice",
+      "target": {
+        "type": "functional_block",
+        "id": "BLOCK_PWR_001"
+      },
+      "choice": "switching_step_down",
+      "rationale": "A step-down functional topology matches the nominal 12 V input and lower regulated 5 V output rail.",
+      "driven_by_requirements": [
+        "REQ_PWR_001",
+        "REQ_PWR_002",
+        "REQ_PWR_003"
+      ],
+      "status": "accepted"
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "DASM_001",
+      "description": "All low-voltage functional blocks share a common ground domain.",
+      "impact": "medium",
+      "status": "active",
+      "affected_blocks": [
+        "BLOCK_PWR_001",
+        "BLOCK_SENSOR_001",
+        "BLOCK_HOST_IF_001"
+      ]
+    }
+  ],
+  "open_decisions": [
+    {
+      "open_decision_id": "ODEC_001",
+      "topic": "host_interface_strategy",
+      "description": "The architecture has not yet selected how the sensor interface is physically exposed.",
+      "options": [
+        "direct_interface",
+        "interface_bridge"
+      ],
+      "blocking": false,
+      "status": "open",
+      "affected_blocks": [
+        "BLOCK_SENSOR_001",
+        "BLOCK_HOST_IF_001"
+      ]
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-08-16T00:00:00+05:30",
+    "updated_at": "2026-08-16T00:00:00+05:30",
+    "created_by": "architecture_planner"
+  }
+}

@@ -40,6 +40,10 @@ def message(text, message_id="MSG_001"):
     return MessageEnvelope(message_id=message_id, project_id="PRJ_0001", text=text)
 
 
+CREATED_AT = datetime(2026, 8, 15, tzinfo=timezone.utc)
+UPDATED_AT = datetime(2026, 8, 16, tzinfo=timezone.utc)
+
+
 def power_supply_requirements(unit_v="V", unit_a="A"):
     return [
         {
@@ -283,7 +287,8 @@ class RequirementInterpreterTests(unittest.TestCase):
 
     def test_follow_up_replacement_preserves_requirement_id_and_increments_revision(self):
         initial = RequirementInterpreter(FakeLLMClient([extraction(power_supply_requirements())])).interpret_new(
-            message("Make a 12V to 5V 2A power supply.")
+            message("Make a 12V to 5V 2A power supply."),
+            created_at=CREATED_AT,
         ).model
         change = output(
             {
@@ -300,7 +305,7 @@ class RequirementInterpreterTests(unittest.TestCase):
         updated = interpreter.interpret_change(
             message("Actually make the output 3.3 V.", "MSG_002"),
             initial,
-            updated_at=datetime(2026, 8, 16, tzinfo=timezone.utc),
+            updated_at=UPDATED_AT,
         ).model
 
         output_voltage = [req for req in updated.requirements if req.type == "output_voltage"]
@@ -312,7 +317,8 @@ class RequirementInterpreterTests(unittest.TestCase):
 
     def test_follow_up_addition_allocates_new_id(self):
         initial = RequirementInterpreter(FakeLLMClient([extraction(power_supply_requirements())])).interpret_new(
-            message("Make a 12V to 5V 2A power supply.")
+            message("Make a 12V to 5V 2A power supply."),
+            created_at=CREATED_AT,
         ).model
         addition = output(
             {
@@ -338,7 +344,8 @@ class RequirementInterpreterTests(unittest.TestCase):
 
     def test_ambiguous_modification_returns_open_question_without_guessing(self):
         initial = RequirementInterpreter(FakeLLMClient([extraction(power_supply_requirements())])).interpret_new(
-            message("Make a 12V to 5V 2A power supply.")
+            message("Make a 12V to 5V 2A power supply."),
+            created_at=CREATED_AT,
         ).model
         ambiguity = output(
             {
@@ -369,7 +376,8 @@ class RequirementInterpreterTests(unittest.TestCase):
 
     def test_follow_up_question_persists_in_canonical_model(self):
         initial = RequirementInterpreter(FakeLLMClient([extraction(power_supply_requirements())])).interpret_new(
-            message("Make a 12V to 5V 2A power supply.")
+            message("Make a 12V to 5V 2A power supply."),
+            created_at=CREATED_AT,
         ).model
         question_only = output(
             {
@@ -389,7 +397,7 @@ class RequirementInterpreterTests(unittest.TestCase):
         result = RequirementInterpreter(FakeLLMClient([question_only])).interpret_change(
             message("Make it very clean.", "MSG_002"),
             initial,
-            updated_at=datetime(2026, 8, 16, tzinfo=timezone.utc),
+            updated_at=UPDATED_AT,
         )
 
         self.assertEqual(result.status, "needs_input")
@@ -401,7 +409,8 @@ class RequirementInterpreterTests(unittest.TestCase):
 
     def test_mixed_follow_up_edit_and_question_persist(self):
         initial = RequirementInterpreter(FakeLLMClient([extraction(power_supply_requirements())])).interpret_new(
-            message("Make a 12V to 5V 2A power supply.")
+            message("Make a 12V to 5V 2A power supply."),
+            created_at=CREATED_AT,
         ).model
         mixed = output(
             {
@@ -426,7 +435,7 @@ class RequirementInterpreterTests(unittest.TestCase):
         result = RequirementInterpreter(FakeLLMClient([mixed])).interpret_change(
             message("Actually make the output 3.3 V, but I am not sure about current.", "MSG_002"),
             initial,
-            updated_at=datetime(2026, 8, 16, tzinfo=timezone.utc),
+            updated_at=UPDATED_AT,
         )
 
         output_voltage = next(req for req in result.model.requirements if req.id == "REQ_PWR_002")
@@ -453,7 +462,7 @@ class RequirementInterpreterTests(unittest.TestCase):
                     )
                 ]
             )
-        ).interpret_new(message("Make a 5 V converter.")).model
+        ).interpret_new(message("Make a 5 V converter."), created_at=CREATED_AT).model
         self.assertEqual([question.id for question in initial.open_questions], ["Q_001"])
 
         next_question = output(
@@ -474,7 +483,7 @@ class RequirementInterpreterTests(unittest.TestCase):
         result = RequirementInterpreter(FakeLLMClient([next_question])).interpret_change(
             message("Also make sure it works from my adapter.", "MSG_002"),
             initial,
-            updated_at=datetime(2026, 8, 16, tzinfo=timezone.utc),
+            updated_at=UPDATED_AT,
         )
 
         self.assertEqual([question.id for question in result.model.open_questions], ["Q_001", "Q_002"])

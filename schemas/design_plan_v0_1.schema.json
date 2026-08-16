@@ -1,0 +1,1151 @@
+{
+  "$defs": {
+    "ArchitectureChoice": {
+      "enum": [
+        "switching_step_down",
+        "switching_step_up",
+        "switching_inverting",
+        "linear_regulation",
+        "isolated_power_conversion",
+        "non_isolated_power_conversion",
+        "direct_interface",
+        "interface_bridge",
+        "analog_filter",
+        "amplifier",
+        "signal_conditioning",
+        "level_translation",
+        "galvanic_isolation",
+        "sensor_frontend",
+        "actuator_driver",
+        "protocol_translation",
+        "single_rail",
+        "multiple_rails",
+        "centralized_regulation",
+        "distributed_regulation",
+        "isolated_domains",
+        "shared_ground_domains",
+        "galvanically_isolated",
+        "non_isolated",
+        "partial_isolation",
+        "direct_signal_path",
+        "filtered_signal_path",
+        "amplified_signal_path",
+        "conditioned_signal_path",
+        "differential_signal_path",
+        "single_ended_signal_path",
+        "single_board_partition",
+        "modular_partition",
+        "separate_power_and_control",
+        "integrated_architecture",
+        "custom_architecture"
+      ],
+      "title": "ArchitectureChoice",
+      "type": "string"
+    },
+    "ArchitectureDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "choice": {
+          "$ref": "#/$defs/ArchitectureChoice"
+        },
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "driven_by_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Driven By Requirements",
+          "type": "array"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ArchitectureDecisionStatus",
+          "default": "proposed"
+        },
+        "target": {
+          "$ref": "#/$defs/MappingTarget"
+        },
+        "type": {
+          "$ref": "#/$defs/ArchitectureDecisionType"
+        }
+      },
+      "required": [
+        "decision_id",
+        "type",
+        "target",
+        "choice",
+        "rationale"
+      ],
+      "title": "ArchitectureDecision",
+      "type": "object"
+    },
+    "ArchitectureDecisionStatus": {
+      "enum": [
+        "proposed",
+        "accepted",
+        "superseded",
+        "rejected"
+      ],
+      "title": "ArchitectureDecisionStatus",
+      "type": "string"
+    },
+    "ArchitectureDecisionType": {
+      "enum": [
+        "topology_choice",
+        "partitioning",
+        "interface_strategy",
+        "power_strategy",
+        "isolation_strategy",
+        "signal_path_strategy",
+        "other"
+      ],
+      "title": "ArchitectureDecisionType",
+      "type": "string"
+    },
+    "BlockConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "connection_id": {
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConnectionKind"
+        },
+        "source": {
+          "$ref": "#/$defs/ConnectionEndpoint"
+        },
+        "target": {
+          "$ref": "#/$defs/ConnectionEndpoint"
+        }
+      },
+      "required": [
+        "connection_id",
+        "source",
+        "target",
+        "kind",
+        "description"
+      ],
+      "title": "BlockConnection",
+      "type": "object"
+    },
+    "BooleanConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanConstraint",
+      "type": "object"
+    },
+    "ConnectionEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "title": "Block Id",
+          "type": "string"
+        },
+        "port_id": {
+          "title": "Port Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "port_id"
+      ],
+      "title": "ConnectionEndpoint",
+      "type": "object"
+    },
+    "ConnectionKind": {
+      "enum": [
+        "power",
+        "analog_signal",
+        "digital_signal",
+        "communication",
+        "control",
+        "feedback",
+        "clock",
+        "other"
+      ],
+      "title": "ConnectionKind",
+      "type": "string"
+    },
+    "DesignAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_blocks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Affected Blocks",
+          "type": "array"
+        },
+        "assumption_id": {
+          "title": "Assumption Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "impact": {
+          "$ref": "#/$defs/Impact"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "resolved",
+            "dismissed"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assumption_id",
+        "description",
+        "impact"
+      ],
+      "title": "DesignAssumption",
+      "type": "object"
+    },
+    "DesignPlanMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "DesignPlanMetadata",
+      "type": "object"
+    },
+    "EnumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed",
+          "type": "array"
+        },
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "title": "EnumConstraint",
+      "type": "object"
+    },
+    "EnumPreferenceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum_preference",
+          "default": "enum_preference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "preferred": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Preferred",
+          "type": "array"
+        }
+      },
+      "required": [
+        "preferred"
+      ],
+      "title": "EnumPreferenceConstraint",
+      "type": "object"
+    },
+    "ExactConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exact",
+          "default": "exact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "ExactConstraint",
+      "type": "object"
+    },
+    "FunctionalBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "title": "Block Id",
+          "type": "string"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/FunctionalPort"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/FunctionalPort"
+          },
+          "title": "Outputs",
+          "type": "array"
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/FunctionalBlockStatus",
+          "default": "planned"
+        },
+        "topology_class": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionalTopologyClass"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "$ref": "#/$defs/FunctionalBlockType"
+        }
+      },
+      "required": [
+        "block_id",
+        "type",
+        "name",
+        "purpose"
+      ],
+      "title": "FunctionalBlock",
+      "type": "object"
+    },
+    "FunctionalBlockStatus": {
+      "enum": [
+        "planned",
+        "accepted",
+        "superseded",
+        "rejected"
+      ],
+      "title": "FunctionalBlockStatus",
+      "type": "string"
+    },
+    "FunctionalBlockType": {
+      "enum": [
+        "power_input",
+        "power_protection",
+        "power_conversion",
+        "power_distribution",
+        "sensor",
+        "actuator",
+        "signal_conditioning",
+        "analog_processing",
+        "digital_logic",
+        "communication",
+        "interface_bridge",
+        "connector",
+        "user_interface",
+        "storage",
+        "timing",
+        "isolation",
+        "other"
+      ],
+      "title": "FunctionalBlockType",
+      "type": "string"
+    },
+    "FunctionalPort": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/PortDirection"
+        },
+        "interface_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interface Id"
+        },
+        "kind": {
+          "$ref": "#/$defs/FunctionalPortKind"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "port_id": {
+          "title": "Port Id",
+          "type": "string"
+        },
+        "power_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Power Domain"
+        }
+      },
+      "required": [
+        "port_id",
+        "name",
+        "kind",
+        "direction"
+      ],
+      "title": "FunctionalPort",
+      "type": "object"
+    },
+    "FunctionalPortKind": {
+      "enum": [
+        "power",
+        "analog_signal",
+        "digital_signal",
+        "communication",
+        "control",
+        "feedback",
+        "clock",
+        "other"
+      ],
+      "title": "FunctionalPortKind",
+      "type": "string"
+    },
+    "FunctionalTopologyClass": {
+      "enum": [
+        "switching_step_down",
+        "switching_step_up",
+        "switching_inverting",
+        "linear_regulation",
+        "isolated_power_conversion",
+        "non_isolated_power_conversion",
+        "direct_interface",
+        "interface_bridge",
+        "analog_filter",
+        "amplifier",
+        "signal_conditioning",
+        "level_translation",
+        "galvanic_isolation",
+        "sensor_frontend",
+        "actuator_driver",
+        "custom_architecture"
+      ],
+      "title": "FunctionalTopologyClass",
+      "type": "string"
+    },
+    "Impact": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Impact",
+      "type": "string"
+    },
+    "Interface": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/InterfaceDirection"
+        },
+        "interface_id": {
+          "title": "Interface Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "participants": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Participants",
+          "type": "array"
+        },
+        "power_domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Power Domain"
+        },
+        "type": {
+          "$ref": "#/$defs/InterfaceType"
+        }
+      },
+      "required": [
+        "interface_id",
+        "type",
+        "name",
+        "participants",
+        "direction"
+      ],
+      "title": "Interface",
+      "type": "object"
+    },
+    "InterfaceDirection": {
+      "enum": [
+        "input",
+        "output",
+        "bidirectional"
+      ],
+      "title": "InterfaceDirection",
+      "type": "string"
+    },
+    "InterfaceType": {
+      "enum": [
+        "i2c",
+        "spi",
+        "uart",
+        "can",
+        "usb",
+        "gpio",
+        "pwm",
+        "analog",
+        "power",
+        "clock",
+        "custom"
+      ],
+      "title": "InterfaceType",
+      "type": "string"
+    },
+    "MappingTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/MappingTargetType"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "title": "MappingTarget",
+      "type": "object"
+    },
+    "MappingTargetType": {
+      "enum": [
+        "functional_block",
+        "power_domain",
+        "interface",
+        "block_connection",
+        "architecture_decision"
+      ],
+      "title": "MappingTargetType",
+      "type": "string"
+    },
+    "MaximumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "maximum",
+          "default": "maximum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MaximumConstraint",
+      "type": "object"
+    },
+    "MinimumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "minimum",
+          "default": "minimum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MinimumConstraint",
+      "type": "object"
+    },
+    "NominalConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal",
+          "default": "nominal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "NominalConstraint",
+      "type": "object"
+    },
+    "NominalWithToleranceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal_with_tolerance",
+          "default": "nominal_with_tolerance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "nominal": {
+          "title": "Nominal",
+          "type": "number"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/Tolerance"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nominal",
+        "unit",
+        "tolerance"
+      ],
+      "title": "NominalWithToleranceConstraint",
+      "type": "object"
+    },
+    "OpenArchitectureDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_blocks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Affected Blocks",
+          "type": "array"
+        },
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "open_decision_id": {
+          "title": "Open Decision Id",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/ArchitectureChoice"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/OpenDecisionStatus",
+          "default": "open"
+        },
+        "topic": {
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "open_decision_id",
+        "topic",
+        "description",
+        "blocking"
+      ],
+      "title": "OpenArchitectureDecision",
+      "type": "object"
+    },
+    "OpenDecisionStatus": {
+      "enum": [
+        "open",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "OpenDecisionStatus",
+      "type": "string"
+    },
+    "PortDirection": {
+      "enum": [
+        "input",
+        "output",
+        "bidirectional"
+      ],
+      "title": "PortDirection",
+      "type": "string"
+    },
+    "PowerDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "consumer_blocks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Consumer Blocks",
+          "type": "array"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "power_domain_id": {
+          "title": "Power Domain Id",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/PowerDomainRole"
+        },
+        "source_block": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Block"
+        },
+        "voltage": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "boolean": "#/$defs/BooleanConstraint",
+                  "enum": "#/$defs/EnumConstraint",
+                  "enum_preference": "#/$defs/EnumPreferenceConstraint",
+                  "exact": "#/$defs/ExactConstraint",
+                  "maximum": "#/$defs/MaximumConstraint",
+                  "minimum": "#/$defs/MinimumConstraint",
+                  "nominal": "#/$defs/NominalConstraint",
+                  "nominal_with_tolerance": "#/$defs/NominalWithToleranceConstraint",
+                  "range": "#/$defs/RangeConstraint",
+                  "text": "#/$defs/TextConstraint"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ExactConstraint"
+                },
+                {
+                  "$ref": "#/$defs/NominalConstraint"
+                },
+                {
+                  "$ref": "#/$defs/MinimumConstraint"
+                },
+                {
+                  "$ref": "#/$defs/MaximumConstraint"
+                },
+                {
+                  "$ref": "#/$defs/RangeConstraint"
+                },
+                {
+                  "$ref": "#/$defs/BooleanConstraint"
+                },
+                {
+                  "$ref": "#/$defs/EnumConstraint"
+                },
+                {
+                  "$ref": "#/$defs/EnumPreferenceConstraint"
+                },
+                {
+                  "$ref": "#/$defs/TextConstraint"
+                },
+                {
+                  "$ref": "#/$defs/NominalWithToleranceConstraint"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voltage"
+        }
+      },
+      "required": [
+        "power_domain_id",
+        "name",
+        "role"
+      ],
+      "title": "PowerDomain",
+      "type": "object"
+    },
+    "PowerDomainRole": {
+      "enum": [
+        "input",
+        "protected_input",
+        "regulated_output",
+        "unregulated",
+        "logic_supply",
+        "analog_supply",
+        "reference",
+        "isolated_supply",
+        "other"
+      ],
+      "title": "PowerDomainRole",
+      "type": "string"
+    },
+    "RangeConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "range",
+          "default": "range",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "number"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum",
+        "unit"
+      ],
+      "title": "RangeConstraint",
+      "type": "object"
+    },
+    "RequirementMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "implemented_by": {
+          "items": {
+            "$ref": "#/$defs/MappingTarget"
+          },
+          "title": "Implemented By",
+          "type": "array"
+        },
+        "mapping_id": {
+          "title": "Mapping Id",
+          "type": "string"
+        },
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/RequirementMappingStatus"
+        }
+      },
+      "required": [
+        "mapping_id",
+        "requirement_id",
+        "status"
+      ],
+      "title": "RequirementMapping",
+      "type": "object"
+    },
+    "RequirementMappingStatus": {
+      "enum": [
+        "mapped",
+        "partially_mapped",
+        "unresolved",
+        "not_applicable"
+      ],
+      "title": "RequirementMappingStatus",
+      "type": "string"
+    },
+    "SourceRequirementSet": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_set_id": {
+          "title": "Requirement Set Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "requirement_set_id",
+        "revision"
+      ],
+      "title": "SourceRequirementSet",
+      "type": "object"
+    },
+    "TextConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextConstraint",
+      "type": "object"
+    },
+    "Tolerance": {
+      "additionalProperties": false,
+      "properties": {
+        "minus": {
+          "minimum": 0,
+          "title": "Minus",
+          "type": "number"
+        },
+        "plus": {
+          "minimum": 0,
+          "title": "Plus",
+          "type": "number"
+        },
+        "type": {
+          "enum": [
+            "percent",
+            "absolute"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type",
+        "minus",
+        "plus"
+      ],
+      "title": "Tolerance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "architecture_decisions": {
+      "items": {
+        "$ref": "#/$defs/ArchitectureDecision"
+      },
+      "title": "Architecture Decisions",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "$ref": "#/$defs/DesignAssumption"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "block_connections": {
+      "items": {
+        "$ref": "#/$defs/BlockConnection"
+      },
+      "title": "Block Connections",
+      "type": "array"
+    },
+    "design_plan_id": {
+      "title": "Design Plan Id",
+      "type": "string"
+    },
+    "functional_blocks": {
+      "items": {
+        "$ref": "#/$defs/FunctionalBlock"
+      },
+      "title": "Functional Blocks",
+      "type": "array"
+    },
+    "interfaces": {
+      "items": {
+        "$ref": "#/$defs/Interface"
+      },
+      "title": "Interfaces",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/DesignPlanMetadata"
+    },
+    "open_decisions": {
+      "items": {
+        "$ref": "#/$defs/OpenArchitectureDecision"
+      },
+      "title": "Open Decisions",
+      "type": "array"
+    },
+    "power_domains": {
+      "items": {
+        "$ref": "#/$defs/PowerDomain"
+      },
+      "title": "Power Domains",
+      "type": "array"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "requirement_mappings": {
+      "items": {
+        "$ref": "#/$defs/RequirementMapping"
+      },
+      "title": "Requirement Mappings",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_requirement_set": {
+      "$ref": "#/$defs/SourceRequirementSet"
+    }
+  },
+  "required": [
+    "design_plan_id",
+    "project_id",
+    "revision",
+    "source_requirement_set",
+    "metadata"
+  ],
+  "title": "DesignPlan",
+  "type": "object"
+}
