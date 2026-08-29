@@ -1,0 +1,1722 @@
+{
+  "$defs": {
+    "AttributeConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required_value": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanAttributeValue",
+              "enum": "#/$defs/EnumAttributeValue",
+              "exact": "#/$defs/QuantityExactValue",
+              "maximum": "#/$defs/QuantityMaximumValue",
+              "minimum": "#/$defs/QuantityMinimumValue",
+              "nominal": "#/$defs/QuantityNominalValue",
+              "range": "#/$defs/QuantityRangeValue",
+              "text": "#/$defs/TextAttributeValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QuantityExactValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityNominalValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityMinimumValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityMaximumValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityRangeValue"
+            },
+            {
+              "$ref": "#/$defs/BooleanAttributeValue"
+            },
+            {
+              "$ref": "#/$defs/TextAttributeValue"
+            },
+            {
+              "$ref": "#/$defs/EnumAttributeValue"
+            }
+          ],
+          "title": "Required Value"
+        }
+      },
+      "required": [
+        "name",
+        "required_value"
+      ],
+      "title": "AttributeConstraint",
+      "type": "object"
+    },
+    "BooleanAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanAttributeValue",
+      "type": "object"
+    },
+    "BooleanConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanConstraint",
+      "type": "object"
+    },
+    "ComplianceClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "claim_type": {
+          "$ref": "#/$defs/ComplianceClaimType"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "evidence_state": {
+          "$ref": "#/$defs/KnowledgeState"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "standard": {
+          "$ref": "#/$defs/ComplianceStandard"
+        }
+      },
+      "required": [
+        "claim_id",
+        "standard",
+        "claim_type",
+        "evidence_state",
+        "metadata"
+      ],
+      "title": "ComplianceClaim",
+      "type": "object"
+    },
+    "ComplianceClaimType": {
+      "enum": [
+        "qualified_to",
+        "developed_according_to",
+        "compliant_product",
+        "compliant_development_process",
+        "safety_documentation_available",
+        "supports_target_integrity_level",
+        "manufacturer_claim",
+        "third_party_certified",
+        "other"
+      ],
+      "title": "ComplianceClaimType",
+      "type": "string"
+    },
+    "ComplianceStandard": {
+      "enum": [
+        "ISO_26262",
+        "ISO_SAE_21434",
+        "AEC_Q100",
+        "AEC_Q101",
+        "AEC_Q102",
+        "AEC_Q103",
+        "AEC_Q104",
+        "AEC_Q200",
+        "IEC",
+        "UL",
+        "other"
+      ],
+      "title": "ComplianceStandard",
+      "type": "string"
+    },
+    "ComponentAttribute": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_id": {
+          "title": "Attribute Id",
+          "type": "string"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/KnowledgeState",
+          "default": "unverified"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "boolean": "#/$defs/BooleanAttributeValue",
+                  "enum": "#/$defs/EnumAttributeValue",
+                  "exact": "#/$defs/QuantityExactValue",
+                  "maximum": "#/$defs/QuantityMaximumValue",
+                  "minimum": "#/$defs/QuantityMinimumValue",
+                  "nominal": "#/$defs/QuantityNominalValue",
+                  "range": "#/$defs/QuantityRangeValue",
+                  "text": "#/$defs/TextAttributeValue"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/QuantityExactValue"
+                },
+                {
+                  "$ref": "#/$defs/QuantityNominalValue"
+                },
+                {
+                  "$ref": "#/$defs/QuantityMinimumValue"
+                },
+                {
+                  "$ref": "#/$defs/QuantityMaximumValue"
+                },
+                {
+                  "$ref": "#/$defs/QuantityRangeValue"
+                },
+                {
+                  "$ref": "#/$defs/BooleanAttributeValue"
+                },
+                {
+                  "$ref": "#/$defs/TextAttributeValue"
+                },
+                {
+                  "$ref": "#/$defs/EnumAttributeValue"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "attribute_id",
+        "name",
+        "metadata"
+      ],
+      "title": "ComponentAttribute",
+      "type": "object"
+    },
+    "ComponentCategory": {
+      "enum": [
+        "regulator",
+        "power_converter",
+        "mosfet",
+        "diode",
+        "resistor",
+        "capacitor",
+        "inductor",
+        "sensor",
+        "microcontroller",
+        "interface_ic",
+        "isolator",
+        "op_amp",
+        "connector",
+        "relay",
+        "protection_device",
+        "logic_ic",
+        "memory",
+        "timing_device",
+        "other"
+      ],
+      "title": "ComponentCategory",
+      "type": "string"
+    },
+    "ComponentRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "items": {
+            "$ref": "#/$defs/ComponentAttribute"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "category": {
+          "$ref": "#/$defs/ComponentCategory"
+        },
+        "compliance_claims": {
+          "items": {
+            "$ref": "#/$defs/ComplianceClaim"
+          },
+          "title": "Compliance Claims",
+          "type": "array"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "documentation_status": {
+          "$ref": "#/$defs/DocumentationStatus"
+        },
+        "footprint_references": {
+          "items": {
+            "$ref": "#/$defs/FootprintReference"
+          },
+          "title": "Footprint References",
+          "type": "array"
+        },
+        "lifecycle_status": {
+          "$ref": "#/$defs/LifecycleStatus",
+          "default": "unknown"
+        },
+        "manufacturer": {
+          "title": "Manufacturer",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "part_number": {
+          "title": "Part Number",
+          "type": "string"
+        },
+        "qualification_claims": {
+          "items": {
+            "$ref": "#/$defs/ComplianceClaim"
+          },
+          "title": "Qualification Claims",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "symbol_references": {
+          "items": {
+            "$ref": "#/$defs/SymbolReference"
+          },
+          "title": "Symbol References",
+          "type": "array"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        }
+      },
+      "required": [
+        "component_id",
+        "manufacturer",
+        "part_number",
+        "category",
+        "documentation_status",
+        "metadata"
+      ],
+      "title": "ComponentRecord",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanConstraint",
+              "enum": "#/$defs/EnumConstraint",
+              "enum_preference": "#/$defs/EnumPreferenceConstraint",
+              "exact": "#/$defs/ExactConstraint",
+              "maximum": "#/$defs/MaximumConstraint",
+              "minimum": "#/$defs/MinimumConstraint",
+              "nominal": "#/$defs/NominalConstraint",
+              "nominal_with_tolerance": "#/$defs/NominalWithToleranceConstraint",
+              "range": "#/$defs/RangeConstraint",
+              "text": "#/$defs/TextConstraint"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExactConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalConstraint"
+            },
+            {
+              "$ref": "#/$defs/MinimumConstraint"
+            },
+            {
+              "$ref": "#/$defs/MaximumConstraint"
+            },
+            {
+              "$ref": "#/$defs/RangeConstraint"
+            },
+            {
+              "$ref": "#/$defs/BooleanConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumConstraint"
+            },
+            {
+              "$ref": "#/$defs/EnumPreferenceConstraint"
+            },
+            {
+              "$ref": "#/$defs/TextConstraint"
+            },
+            {
+              "$ref": "#/$defs/NominalWithToleranceConstraint"
+            }
+          ],
+          "title": "Constraint"
+        },
+        "parameter": {
+          "title": "Parameter",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parameter",
+        "constraint"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "DocumentationStatus": {
+      "enum": [
+        "complete",
+        "partial",
+        "user_supplied_only",
+        "missing",
+        "unverified"
+      ],
+      "title": "DocumentationStatus",
+      "type": "string"
+    },
+    "EngineeringRule": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/RuleApplicability"
+        },
+        "category": {
+          "$ref": "#/$defs/EngineeringRuleCategory"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/EngineeringRuleSeverity"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/EngineeringRuleStatus",
+          "default": "active"
+        }
+      },
+      "required": [
+        "rule_id",
+        "category",
+        "statement",
+        "severity",
+        "metadata"
+      ],
+      "title": "EngineeringRule",
+      "type": "object"
+    },
+    "EngineeringRuleCategory": {
+      "enum": [
+        "power",
+        "protection",
+        "interface",
+        "analog",
+        "digital",
+        "thermal",
+        "qualification",
+        "safety",
+        "layout",
+        "other"
+      ],
+      "title": "EngineeringRuleCategory",
+      "type": "string"
+    },
+    "EngineeringRuleSeverity": {
+      "enum": [
+        "required",
+        "recommended",
+        "advisory",
+        "info"
+      ],
+      "title": "EngineeringRuleSeverity",
+      "type": "string"
+    },
+    "EngineeringRuleStatus": {
+      "enum": [
+        "active",
+        "superseded",
+        "draft",
+        "retired"
+      ],
+      "title": "EngineeringRuleStatus",
+      "type": "string"
+    },
+    "EnumAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "EnumAttributeValue",
+      "type": "object"
+    },
+    "EnumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed",
+          "type": "array"
+        },
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "title": "EnumConstraint",
+      "type": "object"
+    },
+    "EnumPreferenceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum_preference",
+          "default": "enum_preference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "preferred": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Preferred",
+          "type": "array"
+        }
+      },
+      "required": [
+        "preferred"
+      ],
+      "title": "EnumPreferenceConstraint",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "extraction_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction Confidence"
+        },
+        "extraction_method": {
+          "$ref": "#/$defs/ExtractionMethod"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "validation_method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceValidationMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "validation_state": {
+          "$ref": "#/$defs/KnowledgeState"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_id",
+        "locator",
+        "extraction_method",
+        "validation_state",
+        "metadata"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceValidationMethod": {
+      "enum": [
+        "manual_review",
+        "schema_validation",
+        "local_file_index",
+        "consistency_check",
+        "not_validated",
+        "other"
+      ],
+      "title": "EvidenceValidationMethod",
+      "type": "string"
+    },
+    "ExactConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exact",
+          "default": "exact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "ExactConstraint",
+      "type": "object"
+    },
+    "ExtractionMethod": {
+      "enum": [
+        "manual",
+        "structured_import",
+        "kicad_index",
+        "parser",
+        "future_llm_draft",
+        "other"
+      ],
+      "title": "ExtractionMethod",
+      "type": "string"
+    },
+    "FootprintReference": {
+      "additionalProperties": false,
+      "properties": {
+        "footprint_name": {
+          "title": "Footprint Name",
+          "type": "string"
+        },
+        "library": {
+          "title": "Library",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "package_mapping": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Mapping"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "verified_exists": {
+          "title": "Verified Exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "library",
+        "footprint_name",
+        "source_id",
+        "verified_exists",
+        "metadata"
+      ],
+      "title": "FootprintReference",
+      "type": "object"
+    },
+    "KnowledgeFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_constraints": {
+          "items": {
+            "$ref": "#/$defs/AttributeConstraint"
+          },
+          "title": "Attribute Constraints",
+          "type": "array"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComponentCategory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "documentation_statuses": {
+          "items": {
+            "$ref": "#/$defs/DocumentationStatus"
+          },
+          "title": "Documentation Statuses",
+          "type": "array"
+        },
+        "minimum_source_trust": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceTrustClass"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "preferred_compliance": {
+          "items": {
+            "$ref": "#/$defs/ComplianceStandard"
+          },
+          "title": "Preferred Compliance",
+          "type": "array"
+        },
+        "preferred_qualifications": {
+          "items": {
+            "$ref": "#/$defs/ComplianceStandard"
+          },
+          "title": "Preferred Qualifications",
+          "type": "array"
+        },
+        "require_footprint": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Require Footprint"
+        },
+        "require_symbol": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Require Symbol"
+        },
+        "required_compliance": {
+          "items": {
+            "$ref": "#/$defs/ComplianceStandard"
+          },
+          "title": "Required Compliance",
+          "type": "array"
+        },
+        "required_qualifications": {
+          "items": {
+            "$ref": "#/$defs/ComplianceStandard"
+          },
+          "title": "Required Qualifications",
+          "type": "array"
+        }
+      },
+      "title": "KnowledgeFilter",
+      "type": "object"
+    },
+    "KnowledgeImportConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_name": {
+          "title": "Attribute Name",
+          "type": "string"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "conflict_id": {
+          "title": "Conflict Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "existing_attribute_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Existing Attribute Ids",
+          "type": "array"
+        },
+        "new_attribute_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Attribute Id"
+        }
+      },
+      "required": [
+        "conflict_id",
+        "component_id",
+        "attribute_name",
+        "description"
+      ],
+      "title": "KnowledgeImportConflict",
+      "type": "object"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    },
+    "KnowledgeQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "filters": {
+          "$ref": "#/$defs/KnowledgeFilter"
+        },
+        "include_rules": {
+          "default": true,
+          "title": "Include Rules",
+          "type": "boolean"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "query_id": {
+          "title": "Query Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_id",
+        "metadata"
+      ],
+      "title": "KnowledgeQuery",
+      "type": "object"
+    },
+    "KnowledgeSource": {
+      "additionalProperties": false,
+      "properties": {
+        "document_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Identifier"
+        },
+        "imported_at": {
+          "format": "date-time",
+          "title": "Imported At",
+          "type": "string"
+        },
+        "imported_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imported By"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "publication_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Date"
+        },
+        "publisher_or_manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publisher Or Manufacturer"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/KnowledgeSourceType"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "trust_class": {
+          "$ref": "#/$defs/SourceTrustClass"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_type",
+        "title",
+        "locator",
+        "trust_class",
+        "metadata"
+      ],
+      "title": "KnowledgeSource",
+      "type": "object"
+    },
+    "KnowledgeSourceType": {
+      "enum": [
+        "manufacturer_datasheet",
+        "manufacturer_reference_manual",
+        "manufacturer_safety_manual",
+        "manufacturer_application_note",
+        "manufacturer_reference_design",
+        "manufacturer_product_page",
+        "standard",
+        "qualification_document",
+        "kicad_library",
+        "manual_entry",
+        "internal_document",
+        "structured_import",
+        "other"
+      ],
+      "title": "KnowledgeSourceType",
+      "type": "string"
+    },
+    "KnowledgeState": {
+      "enum": [
+        "verified",
+        "verified_no",
+        "unknown",
+        "conflicting",
+        "unverified"
+      ],
+      "title": "KnowledgeState",
+      "type": "string"
+    },
+    "LifecycleStatus": {
+      "enum": [
+        "active",
+        "not_recommended_for_new_designs",
+        "obsolete",
+        "unknown"
+      ],
+      "title": "LifecycleStatus",
+      "type": "string"
+    },
+    "MaximumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "maximum",
+          "default": "maximum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MaximumConstraint",
+      "type": "object"
+    },
+    "MinimumConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "minimum",
+          "default": "minimum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "MinimumConstraint",
+      "type": "object"
+    },
+    "NominalConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal",
+          "default": "nominal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "NominalConstraint",
+      "type": "object"
+    },
+    "NominalWithToleranceConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal_with_tolerance",
+          "default": "nominal_with_tolerance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "nominal": {
+          "title": "Nominal",
+          "type": "number"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/Tolerance"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nominal",
+        "unit",
+        "tolerance"
+      ],
+      "title": "NominalWithToleranceConstraint",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityExactValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exact",
+          "default": "exact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityExactValue",
+      "type": "object"
+    },
+    "QuantityMaximumValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "maximum",
+          "default": "maximum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityMaximumValue",
+      "type": "object"
+    },
+    "QuantityMinimumValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "minimum",
+          "default": "minimum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityMinimumValue",
+      "type": "object"
+    },
+    "QuantityNominalValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal",
+          "default": "nominal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityNominalValue",
+      "type": "object"
+    },
+    "QuantityRangeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "range",
+          "default": "range",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "minimum": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "title": "QuantityRangeValue",
+      "type": "object"
+    },
+    "RangeConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "range",
+          "default": "range",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "number"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum",
+        "unit"
+      ],
+      "title": "RangeConstraint",
+      "type": "object"
+    },
+    "RuleApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute Name"
+        },
+        "component_category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComponentCategory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "interface_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interface Type"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "RuleApplicability",
+      "type": "object"
+    },
+    "SourceTrustClass": {
+      "enum": [
+        "authoritative",
+        "trusted_secondary",
+        "curated_internal",
+        "inferred",
+        "unverified"
+      ],
+      "title": "SourceTrustClass",
+      "type": "string"
+    },
+    "SymbolReference": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "title": "Library",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "symbol_name": {
+          "title": "Symbol Name",
+          "type": "string"
+        },
+        "verified_exists": {
+          "title": "Verified Exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "library",
+        "symbol_name",
+        "source_id",
+        "verified_exists",
+        "metadata"
+      ],
+      "title": "SymbolReference",
+      "type": "object"
+    },
+    "TextAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextAttributeValue",
+      "type": "object"
+    },
+    "TextConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextConstraint",
+      "type": "object"
+    },
+    "Tolerance": {
+      "additionalProperties": false,
+      "properties": {
+        "minus": {
+          "minimum": 0,
+          "title": "Minus",
+          "type": "number"
+        },
+        "plus": {
+          "minimum": 0,
+          "title": "Plus",
+          "type": "number"
+        },
+        "type": {
+          "enum": [
+            "percent",
+            "absolute"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type",
+        "minus",
+        "plus"
+      ],
+      "title": "Tolerance",
+      "type": "object"
+    },
+    "UnresolvedKnowledge": {
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Id"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/KnowledgeState",
+          "default": "unknown"
+        },
+        "topic": {
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "topic",
+        "description"
+      ],
+      "title": "UnresolvedKnowledge",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "applied_filters": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Applied Filters",
+      "type": "array"
+    },
+    "component_records": {
+      "items": {
+        "$ref": "#/$defs/ComponentRecord"
+      },
+      "title": "Component Records",
+      "type": "array"
+    },
+    "conflicts": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeImportConflict"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "context_id": {
+      "title": "Context Id",
+      "type": "string"
+    },
+    "engineering_rules": {
+      "items": {
+        "$ref": "#/$defs/EngineeringRule"
+      },
+      "title": "Engineering Rules",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "query": {
+      "$ref": "#/$defs/KnowledgeQuery"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeSource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "unresolved_knowledge": {
+      "items": {
+        "$ref": "#/$defs/UnresolvedKnowledge"
+      },
+      "title": "Unresolved Knowledge",
+      "type": "array"
+    }
+  },
+  "required": [
+    "context_id",
+    "query",
+    "metadata"
+  ],
+  "title": "KnowledgeContext",
+  "type": "object"
+}

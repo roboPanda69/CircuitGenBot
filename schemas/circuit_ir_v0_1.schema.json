@@ -1,0 +1,1166 @@
+{
+  "$defs": {
+    "BooleanCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanCircuitValue",
+      "type": "object"
+    },
+    "CircuitAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "assumption_id": {
+          "title": "Assumption Id",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CircuitAssumptionStatus",
+          "default": "active"
+        },
+        "target_object_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Object Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assumption_id",
+        "statement",
+        "source",
+        "metadata"
+      ],
+      "title": "CircuitAssumption",
+      "type": "object"
+    },
+    "CircuitAssumptionStatus": {
+      "enum": [
+        "active",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "CircuitAssumptionStatus",
+      "type": "string"
+    },
+    "CircuitComponentRole": {
+      "enum": [
+        "resistor",
+        "capacitor",
+        "inductor",
+        "diode",
+        "mosfet",
+        "transistor",
+        "regulator",
+        "converter",
+        "sensor",
+        "microcontroller",
+        "logic",
+        "connector",
+        "relay",
+        "op_amp",
+        "isolator",
+        "protection_device",
+        "interface_ic",
+        "other"
+      ],
+      "title": "CircuitComponentRole",
+      "type": "string"
+    },
+    "CircuitGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "group_id": {
+          "title": "Group Id",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "net_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Net Ids",
+          "type": "array"
+        },
+        "source_block_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Block Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "group_id",
+        "name",
+        "metadata"
+      ],
+      "title": "CircuitGroup",
+      "type": "object"
+    },
+    "CircuitIRMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "CircuitIRMetadata",
+      "type": "object"
+    },
+    "CircuitInterfaceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "design_plan_interface_id": {
+          "title": "Design Plan Interface Id",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "net_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Net Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "binding_id",
+        "design_plan_interface_id",
+        "metadata"
+      ],
+      "title": "CircuitInterfaceBinding",
+      "type": "object"
+    },
+    "ComponentInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "component_class": {
+          "$ref": "#/$defs/CircuitComponentRole"
+        },
+        "component_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Record Id"
+        },
+        "footprint_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FootprintReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "implementation_status": {
+          "$ref": "#/$defs/ImplementationStatus",
+          "default": "unresolved"
+        },
+        "instance_id": {
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "knowledge_references": {
+          "items": {
+            "$ref": "#/$defs/KnowledgeReference"
+          },
+          "title": "Knowledge References",
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/ComponentParameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "pins": {
+          "items": {
+            "$ref": "#/$defs/PinInstance"
+          },
+          "title": "Pins",
+          "type": "array"
+        },
+        "reference_designator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Designator"
+        },
+        "resolution_status": {
+          "$ref": "#/$defs/ComponentResolutionStatus"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "source_block_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Block Ids",
+          "type": "array"
+        },
+        "source_requirement_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Requirement Ids",
+          "type": "array"
+        },
+        "symbol_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SymbolReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "boolean": "#/$defs/BooleanCircuitValue",
+                  "enum": "#/$defs/EnumCircuitValue",
+                  "quantity": "#/$defs/QuantityCircuitValue",
+                  "text": "#/$defs/TextCircuitValue"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/QuantityCircuitValue"
+                },
+                {
+                  "$ref": "#/$defs/TextCircuitValue"
+                },
+                {
+                  "$ref": "#/$defs/BooleanCircuitValue"
+                },
+                {
+                  "$ref": "#/$defs/EnumCircuitValue"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "instance_id",
+        "component_class",
+        "resolution_status",
+        "metadata"
+      ],
+      "title": "ComponentInstance",
+      "type": "object"
+    },
+    "ComponentParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanCircuitValue",
+              "enum": "#/$defs/EnumCircuitValue",
+              "quantity": "#/$defs/QuantityCircuitValue",
+              "text": "#/$defs/TextCircuitValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QuantityCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/TextCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/BooleanCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/EnumCircuitValue"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "metadata"
+      ],
+      "title": "ComponentParameter",
+      "type": "object"
+    },
+    "ComponentResolutionStatus": {
+      "enum": [
+        "unresolved",
+        "partially_resolved",
+        "resolved"
+      ],
+      "title": "ComponentResolutionStatus",
+      "type": "string"
+    },
+    "EnumCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "EnumCircuitValue",
+      "type": "object"
+    },
+    "FootprintReference": {
+      "additionalProperties": false,
+      "properties": {
+        "footprint_name": {
+          "title": "Footprint Name",
+          "type": "string"
+        },
+        "library": {
+          "title": "Library",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "package_mapping": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Mapping"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "verified_exists": {
+          "title": "Verified Exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "library",
+        "footprint_name",
+        "source_id",
+        "verified_exists",
+        "metadata"
+      ],
+      "title": "FootprintReference",
+      "type": "object"
+    },
+    "ImplementationMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "circuit_object_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Circuit Object Ids",
+          "type": "array"
+        },
+        "design_plan_object_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Design Plan Object Ids",
+          "type": "array"
+        },
+        "mapping_id": {
+          "title": "Mapping Id",
+          "type": "string"
+        },
+        "mapping_type": {
+          "$ref": "#/$defs/ImplementationMappingType"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        },
+        "status": {
+          "$ref": "#/$defs/ImplementationStatus",
+          "default": "partial"
+        }
+      },
+      "required": [
+        "mapping_id",
+        "mapping_type"
+      ],
+      "title": "ImplementationMapping",
+      "type": "object"
+    },
+    "ImplementationMappingType": {
+      "enum": [
+        "implements",
+        "supports",
+        "protects",
+        "interfaces",
+        "biases",
+        "filters",
+        "other"
+      ],
+      "title": "ImplementationMappingType",
+      "type": "string"
+    },
+    "ImplementationStatus": {
+      "enum": [
+        "unresolved",
+        "partial",
+        "resolved"
+      ],
+      "title": "ImplementationStatus",
+      "type": "string"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    },
+    "KnowledgeReference": {
+      "additionalProperties": false,
+      "properties": {
+        "component_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Record Id"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        }
+      },
+      "title": "KnowledgeReference",
+      "type": "object"
+    },
+    "Net": {
+      "additionalProperties": false,
+      "properties": {
+        "connections": {
+          "items": {
+            "$ref": "#/$defs/NetConnection"
+          },
+          "title": "Connections",
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "net_class": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Net Class"
+        },
+        "net_id": {
+          "title": "Net Id",
+          "type": "string"
+        },
+        "power_domain_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Power Domain Id"
+        },
+        "properties": {
+          "items": {
+            "$ref": "#/$defs/NetProperty"
+          },
+          "title": "Properties",
+          "type": "array"
+        },
+        "role": {
+          "$ref": "#/$defs/NetRole",
+          "default": "unknown"
+        }
+      },
+      "required": [
+        "net_id",
+        "metadata"
+      ],
+      "title": "Net",
+      "type": "object"
+    },
+    "NetConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "component_instance_id": {
+          "title": "Component Instance Id",
+          "type": "string"
+        },
+        "pin_id": {
+          "title": "Pin Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_instance_id",
+        "pin_id"
+      ],
+      "title": "NetConnection",
+      "type": "object"
+    },
+    "NetProperty": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanCircuitValue",
+              "enum": "#/$defs/EnumCircuitValue",
+              "quantity": "#/$defs/QuantityCircuitValue",
+              "text": "#/$defs/TextCircuitValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QuantityCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/TextCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/BooleanCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/EnumCircuitValue"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "NetProperty",
+      "type": "object"
+    },
+    "NetRole": {
+      "enum": [
+        "power",
+        "ground",
+        "signal",
+        "clock",
+        "analog",
+        "digital",
+        "communication",
+        "unknown"
+      ],
+      "title": "NetRole",
+      "type": "string"
+    },
+    "OpenImplementationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "driven_by_design_plan_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Driven By Design Plan Ids",
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/OpenImplementationDecisionStatus",
+          "default": "open"
+        },
+        "target_object_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Object Ids",
+          "type": "array"
+        },
+        "topic": {
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "topic",
+        "description",
+        "blocking",
+        "metadata"
+      ],
+      "title": "OpenImplementationDecision",
+      "type": "object"
+    },
+    "OpenImplementationDecisionStatus": {
+      "enum": [
+        "open",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "OpenImplementationDecisionStatus",
+      "type": "string"
+    },
+    "PinConnectionState": {
+      "enum": [
+        "connected",
+        "unresolved",
+        "no_connect"
+      ],
+      "title": "PinConnectionState",
+      "type": "string"
+    },
+    "PinElectricalType": {
+      "enum": [
+        "input",
+        "output",
+        "bidirectional",
+        "passive",
+        "power_input",
+        "power_output",
+        "open_drain",
+        "open_collector",
+        "no_connect",
+        "unspecified"
+      ],
+      "title": "PinElectricalType",
+      "type": "string"
+    },
+    "PinInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "component_instance_id": {
+          "title": "Component Instance Id",
+          "type": "string"
+        },
+        "connection_state": {
+          "$ref": "#/$defs/PinConnectionState",
+          "default": "unresolved"
+        },
+        "electrical_type": {
+          "$ref": "#/$defs/PinElectricalType",
+          "default": "unspecified"
+        },
+        "function": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CircuitIRMetadata"
+        },
+        "pin_id": {
+          "title": "Pin Id",
+          "type": "string"
+        },
+        "pin_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pin Name"
+        },
+        "pin_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pin Number"
+        },
+        "resolution_status": {
+          "$ref": "#/$defs/PinResolutionStatus",
+          "default": "unresolved"
+        }
+      },
+      "required": [
+        "pin_id",
+        "component_instance_id",
+        "metadata"
+      ],
+      "title": "PinInstance",
+      "type": "object"
+    },
+    "PinResolutionStatus": {
+      "enum": [
+        "unresolved",
+        "partially_resolved",
+        "resolved"
+      ],
+      "title": "PinResolutionStatus",
+      "type": "string"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "quantity",
+          "default": "quantity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "quantity"
+      ],
+      "title": "QuantityCircuitValue",
+      "type": "object"
+    },
+    "SourceDesignPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "design_plan_id": {
+          "title": "Design Plan Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "design_plan_id",
+        "revision"
+      ],
+      "title": "SourceDesignPlan",
+      "type": "object"
+    },
+    "SymbolReference": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "title": "Library",
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/KnowledgeMetadata"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "symbol_name": {
+          "title": "Symbol Name",
+          "type": "string"
+        },
+        "verified_exists": {
+          "title": "Verified Exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "library",
+        "symbol_name",
+        "source_id",
+        "verified_exists",
+        "metadata"
+      ],
+      "title": "SymbolReference",
+      "type": "object"
+    },
+    "TextCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextCircuitValue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "assumptions": {
+      "items": {
+        "$ref": "#/$defs/CircuitAssumption"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "circuit_id": {
+      "title": "Circuit Id",
+      "type": "string"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/ComponentInstance"
+      },
+      "title": "Components",
+      "type": "array"
+    },
+    "groups": {
+      "items": {
+        "$ref": "#/$defs/CircuitGroup"
+      },
+      "title": "Groups",
+      "type": "array"
+    },
+    "implementation_mappings": {
+      "items": {
+        "$ref": "#/$defs/ImplementationMapping"
+      },
+      "title": "Implementation Mappings",
+      "type": "array"
+    },
+    "implementation_status": {
+      "$ref": "#/$defs/ImplementationStatus",
+      "default": "unresolved"
+    },
+    "interface_bindings": {
+      "items": {
+        "$ref": "#/$defs/CircuitInterfaceBinding"
+      },
+      "title": "Interface Bindings",
+      "type": "array"
+    },
+    "knowledge_references": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeReference"
+      },
+      "title": "Knowledge References",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/CircuitIRMetadata"
+    },
+    "nets": {
+      "items": {
+        "$ref": "#/$defs/Net"
+      },
+      "title": "Nets",
+      "type": "array"
+    },
+    "open_decisions": {
+      "items": {
+        "$ref": "#/$defs/OpenImplementationDecision"
+      },
+      "title": "Open Decisions",
+      "type": "array"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_design_plan": {
+      "$ref": "#/$defs/SourceDesignPlan"
+    }
+  },
+  "required": [
+    "circuit_id",
+    "project_id",
+    "revision",
+    "source_design_plan",
+    "metadata"
+  ],
+  "title": "CircuitIR",
+  "type": "object"
+}

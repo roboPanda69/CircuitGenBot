@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "ComponentIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "manufacturer": {
+          "title": "Manufacturer",
+          "type": "string"
+        },
+        "part_number": {
+          "title": "Part Number",
+          "type": "string"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        }
+      },
+      "required": [
+        "manufacturer",
+        "part_number"
+      ],
+      "title": "ComponentIdentity",
+      "type": "object"
+    },
+    "KnowledgeImportMode": {
+      "enum": [
+        "create_or_enrich",
+        "create_only",
+        "enrich_existing",
+        "validate_only"
+      ],
+      "title": "KnowledgeImportMode",
+      "type": "string"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    },
+    "KnowledgeSourceType": {
+      "enum": [
+        "manufacturer_datasheet",
+        "manufacturer_reference_manual",
+        "manufacturer_safety_manual",
+        "manufacturer_application_note",
+        "manufacturer_reference_design",
+        "manufacturer_product_page",
+        "standard",
+        "qualification_document",
+        "kicad_library",
+        "manual_entry",
+        "internal_document",
+        "structured_import",
+        "other"
+      ],
+      "title": "KnowledgeSourceType",
+      "type": "string"
+    },
+    "SourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "reference_type": {
+          "$ref": "#/$defs/SourceReferenceType"
+        }
+      },
+      "required": [
+        "reference_type",
+        "locator"
+      ],
+      "title": "SourceReference",
+      "type": "object"
+    },
+    "SourceReferenceType": {
+      "enum": [
+        "local_json",
+        "local_yaml",
+        "local_pdf",
+        "structured_data",
+        "internal_document",
+        "kicad_library",
+        "manual",
+        "other"
+      ],
+      "title": "SourceReferenceType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "import_mode": {
+      "$ref": "#/$defs/KnowledgeImportMode",
+      "default": "create_or_enrich"
+    },
+    "import_request_id": {
+      "title": "Import Request Id",
+      "type": "string"
+    },
+    "intended_component_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ComponentIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_reference": {
+      "$ref": "#/$defs/SourceReference"
+    },
+    "source_type": {
+      "$ref": "#/$defs/KnowledgeSourceType"
+    },
+    "user_metadata": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "User Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "import_request_id",
+    "source_reference",
+    "source_type",
+    "metadata"
+  ],
+  "title": "KnowledgeImportRequest",
+  "type": "object"
+}

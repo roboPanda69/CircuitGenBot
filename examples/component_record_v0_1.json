@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "component_id": "CMP_SYNTHETIC_SEMICONDUCTOR_SYN_PWR_001",
+  "manufacturer": "Synthetic Semiconductor",
+  "part_number": "SYN-PWR-001",
+  "variant": null,
+  "category": "power_converter",
+  "description": "Synthetic switching regulator-like component record for Engineering Knowledge v0.1 examples.",
+  "attributes": [
+    {
+      "attribute_id": "ATTR_001",
+      "name": "input_voltage",
+      "value": {
+        "kind": "range",
+        "minimum": {
+          "value": 3,
+          "unit": "V"
+        },
+        "maximum": {
+          "value": 17,
+          "unit": "V"
+        }
+      },
+      "conditions": [],
+      "evidence_ids": [
+        "EVID_DS_001"
+      ],
+      "status": "verified",
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    },
+    {
+      "attribute_id": "ATTR_002",
+      "name": "maximum_output_current",
+      "value": {
+        "kind": "maximum",
+        "value": {
+          "value": 3,
+          "unit": "A"
+        }
+      },
+      "conditions": [],
+      "evidence_ids": [
+        "EVID_DS_001"
+      ],
+      "status": "verified",
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    }
+  ],
+  "qualification_claims": [
+    {
+      "claim_id": "CLAIM_AEC_001",
+      "standard": "AEC_Q100",
+      "claim_type": "qualified_to",
+      "level": null,
+      "scope": "synthetic example fixture",
+      "evidence_state": "verified",
+      "source_ids": [
+        "SRC_DS_001"
+      ],
+      "evidence_ids": [
+        "EVID_DS_001"
+      ],
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    }
+  ],
+  "compliance_claims": [
+    {
+      "claim_id": "CLAIM_ISO_001",
+      "standard": "ISO_26262",
+      "claim_type": "supports_target_integrity_level",
+      "level": "ASIL_B",
+      "scope": "synthetic example fixture",
+      "evidence_state": "unknown",
+      "source_ids": [
+        "SRC_DS_001"
+      ],
+      "evidence_ids": [],
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    }
+  ],
+  "symbol_references": [
+    {
+      "library": "Regulator",
+      "symbol_name": "SYN_PWR_001",
+      "source_id": "SRC_KICAD_001",
+      "verified_exists": true,
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    }
+  ],
+  "footprint_references": [
+    {
+      "library": "Package_QFN",
+      "footprint_name": "QFN_16_SYN",
+      "package_mapping": "Synthetic-QFN-16",
+      "source_id": "SRC_KICAD_001",
+      "verified_exists": true,
+      "metadata": {
+        "created_at": "2026-08-16T00:00:00+05:30",
+        "updated_at": "2026-08-16T00:00:00+05:30",
+        "created_by": "knowledge_fixture"
+      }
+    }
+  ],
+  "source_ids": [
+    "SRC_DS_001",
+    "SRC_KICAD_001"
+  ],
+  "documentation_status": "complete",
+  "lifecycle_status": "active",
+  "metadata": {
+    "created_at": "2026-08-16T00:00:00+05:30",
+    "updated_at": "2026-08-16T00:00:00+05:30",
+    "created_by": "knowledge_fixture"
+  }
+}

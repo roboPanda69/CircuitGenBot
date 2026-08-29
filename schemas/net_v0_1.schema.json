@@ -1,0 +1,270 @@
+{
+  "$defs": {
+    "BooleanCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanCircuitValue",
+      "type": "object"
+    },
+    "CircuitIRMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "CircuitIRMetadata",
+      "type": "object"
+    },
+    "EnumCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "EnumCircuitValue",
+      "type": "object"
+    },
+    "NetConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "component_instance_id": {
+          "title": "Component Instance Id",
+          "type": "string"
+        },
+        "pin_id": {
+          "title": "Pin Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_instance_id",
+        "pin_id"
+      ],
+      "title": "NetConnection",
+      "type": "object"
+    },
+    "NetProperty": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanCircuitValue",
+              "enum": "#/$defs/EnumCircuitValue",
+              "quantity": "#/$defs/QuantityCircuitValue",
+              "text": "#/$defs/TextCircuitValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QuantityCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/TextCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/BooleanCircuitValue"
+            },
+            {
+              "$ref": "#/$defs/EnumCircuitValue"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "NetProperty",
+      "type": "object"
+    },
+    "NetRole": {
+      "enum": [
+        "power",
+        "ground",
+        "signal",
+        "clock",
+        "analog",
+        "digital",
+        "communication",
+        "unknown"
+      ],
+      "title": "NetRole",
+      "type": "string"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "quantity",
+          "default": "quantity",
+          "title": "Kind",
+          "type": "string"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "quantity"
+      ],
+      "title": "QuantityCircuitValue",
+      "type": "object"
+    },
+    "TextCircuitValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextCircuitValue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "connections": {
+      "items": {
+        "$ref": "#/$defs/NetConnection"
+      },
+      "title": "Connections",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/CircuitIRMetadata"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    },
+    "net_class": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Net Class"
+    },
+    "net_id": {
+      "title": "Net Id",
+      "type": "string"
+    },
+    "power_domain_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Power Domain Id"
+    },
+    "properties": {
+      "items": {
+        "$ref": "#/$defs/NetProperty"
+      },
+      "title": "Properties",
+      "type": "array"
+    },
+    "role": {
+      "$ref": "#/$defs/NetRole",
+      "default": "unknown"
+    }
+  },
+  "required": [
+    "net_id",
+    "metadata"
+  ],
+  "title": "Net",
+  "type": "object"
+}

@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "ComplianceDomain": {
+      "enum": [
+        "consumer",
+        "industrial",
+        "automotive",
+        "medical",
+        "aerospace",
+        "railway",
+        "other"
+      ],
+      "title": "ComplianceDomain",
+      "type": "string"
+    },
+    "ComplianceStandard": {
+      "enum": [
+        "ISO_26262",
+        "ISO_SAE_21434",
+        "AEC_Q100",
+        "AEC_Q101",
+        "AEC_Q102",
+        "AEC_Q103",
+        "AEC_Q104",
+        "AEC_Q200",
+        "IEC",
+        "UL",
+        "other"
+      ],
+      "title": "ComplianceStandard",
+      "type": "string"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ComplianceDomain"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "preferred_qualifications": {
+      "items": {
+        "$ref": "#/$defs/ComplianceStandard"
+      },
+      "title": "Preferred Qualifications",
+      "type": "array"
+    },
+    "preferred_standards": {
+      "items": {
+        "$ref": "#/$defs/ComplianceStandard"
+      },
+      "title": "Preferred Standards",
+      "type": "array"
+    },
+    "profile_id": {
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "required_qualifications": {
+      "items": {
+        "$ref": "#/$defs/ComplianceStandard"
+      },
+      "title": "Required Qualifications",
+      "type": "array"
+    },
+    "required_standards": {
+      "items": {
+        "$ref": "#/$defs/ComplianceStandard"
+      },
+      "title": "Required Standards",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile_id",
+    "metadata"
+  ],
+  "title": "ComplianceProfile",
+  "type": "object"
+}

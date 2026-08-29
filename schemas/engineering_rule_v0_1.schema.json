@@ -1,0 +1,192 @@
+{
+  "$defs": {
+    "ComponentCategory": {
+      "enum": [
+        "regulator",
+        "power_converter",
+        "mosfet",
+        "diode",
+        "resistor",
+        "capacitor",
+        "inductor",
+        "sensor",
+        "microcontroller",
+        "interface_ic",
+        "isolator",
+        "op_amp",
+        "connector",
+        "relay",
+        "protection_device",
+        "logic_ic",
+        "memory",
+        "timing_device",
+        "other"
+      ],
+      "title": "ComponentCategory",
+      "type": "string"
+    },
+    "EngineeringRuleCategory": {
+      "enum": [
+        "power",
+        "protection",
+        "interface",
+        "analog",
+        "digital",
+        "thermal",
+        "qualification",
+        "safety",
+        "layout",
+        "other"
+      ],
+      "title": "EngineeringRuleCategory",
+      "type": "string"
+    },
+    "EngineeringRuleSeverity": {
+      "enum": [
+        "required",
+        "recommended",
+        "advisory",
+        "info"
+      ],
+      "title": "EngineeringRuleSeverity",
+      "type": "string"
+    },
+    "EngineeringRuleStatus": {
+      "enum": [
+        "active",
+        "superseded",
+        "draft",
+        "retired"
+      ],
+      "title": "EngineeringRuleStatus",
+      "type": "string"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    },
+    "RuleApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute Name"
+        },
+        "component_category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComponentCategory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "interface_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interface Type"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "RuleApplicability",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "applicability": {
+      "$ref": "#/$defs/RuleApplicability"
+    },
+    "category": {
+      "$ref": "#/$defs/EngineeringRuleCategory"
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/EngineeringRuleSeverity"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "statement": {
+      "title": "Statement",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/EngineeringRuleStatus",
+      "default": "active"
+    }
+  },
+  "required": [
+    "rule_id",
+    "category",
+    "statement",
+    "severity",
+    "metadata"
+  ],
+  "title": "EngineeringRule",
+  "type": "object"
+}

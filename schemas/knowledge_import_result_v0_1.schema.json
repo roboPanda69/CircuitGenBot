@@ -1,0 +1,163 @@
+{
+  "$defs": {
+    "KnowledgeImportConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_name": {
+          "title": "Attribute Name",
+          "type": "string"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "conflict_id": {
+          "title": "Conflict Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "existing_attribute_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Existing Attribute Ids",
+          "type": "array"
+        },
+        "new_attribute_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Attribute Id"
+        }
+      },
+      "required": [
+        "conflict_id",
+        "component_id",
+        "attribute_name",
+        "description"
+      ],
+      "title": "KnowledgeImportConflict",
+      "type": "object"
+    },
+    "KnowledgeImportStatus": {
+      "enum": [
+        "created",
+        "updated_existing",
+        "duplicate",
+        "needs_review",
+        "failed"
+      ],
+      "title": "KnowledgeImportStatus",
+      "type": "string"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "component_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Component Id"
+    },
+    "conflicts": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeImportConflict"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "created_component": {
+      "default": false,
+      "title": "Created Component",
+      "type": "boolean"
+    },
+    "import_result_id": {
+      "title": "Import Result Id",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/KnowledgeImportStatus"
+    },
+    "unresolved_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unresolved Fields",
+      "type": "array"
+    },
+    "updated_existing": {
+      "default": false,
+      "title": "Updated Existing",
+      "type": "boolean"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "import_result_id",
+    "status",
+    "metadata"
+  ],
+  "title": "KnowledgeImportResult",
+  "type": "object"
+}

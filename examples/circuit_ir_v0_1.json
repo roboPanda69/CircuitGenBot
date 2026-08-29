@@ -1,0 +1,780 @@
+{
+  "schema_version": "0.1",
+  "circuit_id": "CIR_0001",
+  "project_id": "PRJ_0001",
+  "revision": 1,
+  "source_design_plan": {
+    "design_plan_id": "DPLAN_0001",
+    "revision": 1
+  },
+  "implementation_status": "partial",
+  "components": [
+    {
+      "instance_id": "J_IN_001",
+      "reference_designator": "J1",
+      "component_class": "connector",
+      "role": "input_power_connector",
+      "resolution_status": "unresolved",
+      "component_record_id": null,
+      "value": null,
+      "parameters": [],
+      "pins": [
+        {
+          "pin_id": "PIN_J_IN_VIN",
+          "component_instance_id": "J_IN_001",
+          "pin_number": "1",
+          "pin_name": "VIN",
+          "electrical_type": "power_output",
+          "function": "raw input power",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_J_IN_GND",
+          "component_instance_id": "J_IN_001",
+          "pin_number": "2",
+          "pin_name": "GND",
+          "electrical_type": "power_output",
+          "function": "input return",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_INPUT_001"
+      ],
+      "source_requirement_ids": [
+        "REQ_PWR_001"
+      ],
+      "knowledge_references": [],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "partial",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "instance_id": "D_PROT_001",
+      "reference_designator": "D1",
+      "component_class": "protection_device",
+      "role": "reverse_polarity_protection",
+      "resolution_status": "unresolved",
+      "component_record_id": null,
+      "value": null,
+      "parameters": [],
+      "pins": [
+        {
+          "pin_id": "PIN_D_PROT_IN",
+          "component_instance_id": "D_PROT_001",
+          "pin_number": null,
+          "pin_name": "IN",
+          "electrical_type": "passive",
+          "function": "raw input",
+          "resolution_status": "unresolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_D_PROT_OUT",
+          "component_instance_id": "D_PROT_001",
+          "pin_number": null,
+          "pin_name": "OUT",
+          "electrical_type": "passive",
+          "function": "protected output",
+          "resolution_status": "unresolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_PROT_001"
+      ],
+      "source_requirement_ids": [
+        "REQ_PROT_001"
+      ],
+      "knowledge_references": [],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "unresolved",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "instance_id": "U_REG_001",
+      "reference_designator": "U1",
+      "component_class": "converter",
+      "role": "main_5v_step_down_converter",
+      "resolution_status": "resolved",
+      "component_record_id": "CMP_SYNTHETIC_SEMICONDUCTOR_SYN_PWR_001",
+      "value": null,
+      "parameters": [
+        {
+          "name": "output_voltage",
+          "value": {
+            "kind": "quantity",
+            "quantity": {
+              "value": 5,
+              "unit": "V"
+            }
+          },
+          "source": "design_plan_power_domain",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "pins": [
+        {
+          "pin_id": "PIN_U_REG_VIN",
+          "component_instance_id": "U_REG_001",
+          "pin_number": "1",
+          "pin_name": "VIN",
+          "electrical_type": "power_input",
+          "function": "converter input",
+          "resolution_status": "resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_U_REG_SW",
+          "component_instance_id": "U_REG_001",
+          "pin_number": "2",
+          "pin_name": "SW",
+          "electrical_type": "power_output",
+          "function": "switch node",
+          "resolution_status": "partially_resolved",
+          "connection_state": "unresolved",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_U_REG_VOUT",
+          "component_instance_id": "U_REG_001",
+          "pin_number": "3",
+          "pin_name": "VOUT",
+          "electrical_type": "power_output",
+          "function": "regulated output",
+          "resolution_status": "resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_U_REG_GND",
+          "component_instance_id": "U_REG_001",
+          "pin_number": "4",
+          "pin_name": "GND",
+          "electrical_type": "power_input",
+          "function": "power return",
+          "resolution_status": "resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_U_REG_EN",
+          "component_instance_id": "U_REG_001",
+          "pin_number": "5",
+          "pin_name": "EN",
+          "electrical_type": "unspecified",
+          "function": "enable pin pending policy",
+          "resolution_status": "partially_resolved",
+          "connection_state": "no_connect",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_PWR_001"
+      ],
+      "source_requirement_ids": [
+        "REQ_PWR_002",
+        "REQ_PWR_003"
+      ],
+      "knowledge_references": [
+        {
+          "component_record_id": "CMP_SYNTHETIC_SEMICONDUCTOR_SYN_PWR_001",
+          "source_ids": [
+            "SRC_DS_001"
+          ],
+          "evidence_ids": [
+            "EVID_DS_001"
+          ],
+          "purpose": "resolved component identity and basic electrical evidence"
+        }
+      ],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "partial",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "instance_id": "C_IN_001",
+      "reference_designator": "C1",
+      "component_class": "capacitor",
+      "role": "input_decoupling",
+      "resolution_status": "partially_resolved",
+      "component_record_id": null,
+      "value": {
+        "kind": "quantity",
+        "quantity": {
+          "value": 22,
+          "unit": "uF"
+        }
+      },
+      "parameters": [],
+      "pins": [
+        {
+          "pin_id": "PIN_C_IN_POS",
+          "component_instance_id": "C_IN_001",
+          "pin_number": "1",
+          "pin_name": "POS",
+          "electrical_type": "passive",
+          "function": "positive terminal",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_C_IN_NEG",
+          "component_instance_id": "C_IN_001",
+          "pin_number": "2",
+          "pin_name": "NEG",
+          "electrical_type": "passive",
+          "function": "return terminal",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_PWR_001"
+      ],
+      "source_requirement_ids": [
+        "REQ_PWR_003"
+      ],
+      "knowledge_references": [],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "partial",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "instance_id": "C_OUT_001",
+      "reference_designator": "C2",
+      "component_class": "capacitor",
+      "role": "output_decoupling",
+      "resolution_status": "partially_resolved",
+      "component_record_id": null,
+      "value": {
+        "kind": "quantity",
+        "quantity": {
+          "value": 47,
+          "unit": "uF"
+        }
+      },
+      "parameters": [],
+      "pins": [
+        {
+          "pin_id": "PIN_C_OUT_POS",
+          "component_instance_id": "C_OUT_001",
+          "pin_number": "1",
+          "pin_name": "POS",
+          "electrical_type": "passive",
+          "function": "positive terminal",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_C_OUT_NEG",
+          "component_instance_id": "C_OUT_001",
+          "pin_number": "2",
+          "pin_name": "NEG",
+          "electrical_type": "passive",
+          "function": "return terminal",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_PWR_001"
+      ],
+      "source_requirement_ids": [
+        "REQ_PWR_003"
+      ],
+      "knowledge_references": [],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "partial",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "instance_id": "J_OUT_001",
+      "reference_designator": "J2",
+      "component_class": "connector",
+      "role": "regulated_output_connector",
+      "resolution_status": "unresolved",
+      "component_record_id": null,
+      "value": null,
+      "parameters": [],
+      "pins": [
+        {
+          "pin_id": "PIN_J_OUT_5V",
+          "component_instance_id": "J_OUT_001",
+          "pin_number": "1",
+          "pin_name": "5V",
+          "electrical_type": "power_input",
+          "function": "regulated 5 V output",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        },
+        {
+          "pin_id": "PIN_J_OUT_GND",
+          "component_instance_id": "J_OUT_001",
+          "pin_number": "2",
+          "pin_name": "GND",
+          "electrical_type": "power_input",
+          "function": "regulated rail return",
+          "resolution_status": "partially_resolved",
+          "connection_state": "connected",
+          "metadata": {
+            "created_at": "2026-08-29T00:00:00+05:30",
+            "updated_at": "2026-08-29T00:00:00+05:30",
+            "created_by": "circuit_ir_fixture"
+          }
+        }
+      ],
+      "source_block_ids": [
+        "BLOCK_HOST_IF_001"
+      ],
+      "source_requirement_ids": [],
+      "knowledge_references": [],
+      "symbol_reference": null,
+      "footprint_reference": null,
+      "implementation_status": "unresolved",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "nets": [
+    {
+      "net_id": "NET_VIN_RAW",
+      "name": "VIN_RAW",
+      "net_class": "power_input",
+      "connections": [
+        {
+          "component_instance_id": "J_IN_001",
+          "pin_id": "PIN_J_IN_VIN"
+        },
+        {
+          "component_instance_id": "D_PROT_001",
+          "pin_id": "PIN_D_PROT_IN"
+        }
+      ],
+      "role": "power",
+      "power_domain_id": "PWRDOM_VIN_RAW",
+      "properties": [
+        {
+          "name": "nominal_voltage",
+          "value": {
+            "kind": "quantity",
+            "quantity": {
+              "value": 12,
+              "unit": "V"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "net_id": "NET_VIN_PROTECTED",
+      "name": "VIN_PROTECTED",
+      "net_class": "power_input",
+      "connections": [
+        {
+          "component_instance_id": "D_PROT_001",
+          "pin_id": "PIN_D_PROT_OUT"
+        },
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_VIN"
+        },
+        {
+          "component_instance_id": "C_IN_001",
+          "pin_id": "PIN_C_IN_POS"
+        }
+      ],
+      "role": "power",
+      "power_domain_id": "PWRDOM_VIN_PROTECTED",
+      "properties": [
+        {
+          "name": "nominal_voltage",
+          "value": {
+            "kind": "quantity",
+            "quantity": {
+              "value": 12,
+              "unit": "V"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "net_id": "NET_5V",
+      "name": "5V",
+      "net_class": "regulated_power",
+      "connections": [
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_VOUT"
+        },
+        {
+          "component_instance_id": "C_OUT_001",
+          "pin_id": "PIN_C_OUT_POS"
+        },
+        {
+          "component_instance_id": "J_OUT_001",
+          "pin_id": "PIN_J_OUT_5V"
+        }
+      ],
+      "role": "power",
+      "power_domain_id": "PWRDOM_5V",
+      "properties": [
+        {
+          "name": "nominal_voltage",
+          "value": {
+            "kind": "quantity",
+            "quantity": {
+              "value": 5,
+              "unit": "V"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "net_id": "NET_GND",
+      "name": "GND",
+      "net_class": "power_return",
+      "connections": [
+        {
+          "component_instance_id": "J_IN_001",
+          "pin_id": "PIN_J_IN_GND"
+        },
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_GND"
+        },
+        {
+          "component_instance_id": "C_IN_001",
+          "pin_id": "PIN_C_IN_NEG"
+        },
+        {
+          "component_instance_id": "C_OUT_001",
+          "pin_id": "PIN_C_OUT_NEG"
+        },
+        {
+          "component_instance_id": "J_OUT_001",
+          "pin_id": "PIN_J_OUT_GND"
+        }
+      ],
+      "role": "ground",
+      "power_domain_id": null,
+      "properties": [],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "net_id": "NET_AGND",
+      "name": "AGND",
+      "net_class": "analog_return",
+      "connections": [],
+      "role": "ground",
+      "power_domain_id": null,
+      "properties": [],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "interface_bindings": [
+    {
+      "binding_id": "IFB_I2C_PENDING_001",
+      "design_plan_interface_id": "IF_I2C_001",
+      "net_ids": [],
+      "component_ids": [
+        "J_OUT_001"
+      ],
+      "description": "Physical I2C exposure is still an open implementation decision.",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "implementation_mappings": [
+    {
+      "mapping_id": "CIMAP_INPUT_001",
+      "design_plan_object_ids": [
+        "BLOCK_INPUT_001",
+        "PWRDOM_VIN_RAW",
+        "CONN_001"
+      ],
+      "circuit_object_ids": [
+        "J_IN_001",
+        "NET_VIN_RAW",
+        "NET_GND"
+      ],
+      "mapping_type": "implements",
+      "status": "partial",
+      "rationale": "The input connector and raw input net represent the logical input power interface."
+    },
+    {
+      "mapping_id": "CIMAP_PROT_001",
+      "design_plan_object_ids": [
+        "BLOCK_PROT_001",
+        "PWRDOM_VIN_PROTECTED",
+        "CONN_002"
+      ],
+      "circuit_object_ids": [
+        "D_PROT_001",
+        "NET_VIN_PROTECTED"
+      ],
+      "mapping_type": "protects",
+      "status": "partial",
+      "rationale": "The protection device instance marks the intended reverse-polarity stage but remains unresolved."
+    },
+    {
+      "mapping_id": "CIMAP_PWR_001",
+      "design_plan_object_ids": [
+        "BLOCK_PWR_001",
+        "PWRDOM_5V",
+        "DEC_001"
+      ],
+      "circuit_object_ids": [
+        "U_REG_001",
+        "C_IN_001",
+        "C_OUT_001",
+        "NET_5V"
+      ],
+      "mapping_type": "implements",
+      "status": "partial",
+      "rationale": "The converter and decoupling skeleton implement the main 5 V rail at CircuitIR level."
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "CIASM_GND_001",
+      "statement": "Digital power return uses GND; AGND remains separate until an explicit connection strategy is selected.",
+      "target_object_ids": [
+        "NET_GND",
+        "NET_AGND"
+      ],
+      "source": "DASM_001",
+      "status": "active",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "open_decisions": [
+    {
+      "decision_id": "CIOD_PROTECTION_SELECTION_001",
+      "topic": "reverse_polarity_device_selection",
+      "target_object_ids": [
+        "D_PROT_001"
+      ],
+      "description": "Select the actual protection implementation and resolve its symbol, footprint, and pin mapping.",
+      "blocking": true,
+      "options": [
+        "series_schottky",
+        "ideal_diode_controller",
+        "p_channel_mosfet"
+      ],
+      "driven_by_design_plan_ids": [
+        "BLOCK_PROT_001",
+        "MAP_002"
+      ],
+      "status": "open",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    },
+    {
+      "decision_id": "CIOD_HOST_IF_001",
+      "topic": "host_interface_physical_exposure",
+      "target_object_ids": [
+        "IFB_I2C_PENDING_001",
+        "J_OUT_001"
+      ],
+      "description": "Resolve how the logical I2C interface is exposed in physical circuitry.",
+      "blocking": false,
+      "options": [
+        "dedicated_i2c_header",
+        "combined_power_data_header"
+      ],
+      "driven_by_design_plan_ids": [
+        "IF_I2C_001",
+        "ODEC_001"
+      ],
+      "status": "open",
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "group_id": "CGRP_POWER_PATH_001",
+      "name": "Power path skeleton",
+      "component_ids": [
+        "J_IN_001",
+        "D_PROT_001",
+        "U_REG_001",
+        "C_IN_001",
+        "C_OUT_001"
+      ],
+      "net_ids": [
+        "NET_VIN_RAW",
+        "NET_VIN_PROTECTED",
+        "NET_5V",
+        "NET_GND",
+        "NET_AGND"
+      ],
+      "source_block_ids": [
+        "BLOCK_INPUT_001",
+        "BLOCK_PROT_001",
+        "BLOCK_PWR_001"
+      ],
+      "metadata": {
+        "created_at": "2026-08-29T00:00:00+05:30",
+        "updated_at": "2026-08-29T00:00:00+05:30",
+        "created_by": "circuit_ir_fixture"
+      }
+    }
+  ],
+  "knowledge_references": [
+    {
+      "component_record_id": "CMP_SYNTHETIC_SEMICONDUCTOR_SYN_PWR_001",
+      "source_ids": [
+        "SRC_DS_001"
+      ],
+      "evidence_ids": [
+        "EVID_DS_001"
+      ],
+      "purpose": "top-level trace to the synthetic component evidence used by the resolved converter"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-08-29T00:00:00+05:30",
+    "updated_at": "2026-08-29T00:00:00+05:30",
+    "created_by": "circuit_ir_fixture"
+  }
+}

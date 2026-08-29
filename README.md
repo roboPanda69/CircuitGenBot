@@ -10,11 +10,19 @@ Milestone 1.1: `RequirementModel Contract Hardening`
 
 Milestone 2: `Requirement Interpreter v0.1`
 
-System v0.2 current scope:
+System v0.2 frozen scope:
 
 Milestone 3: `DesignPlan v0.1`
 
 Milestone 4: `Architecture Planner v0.1`
+
+System v0.3 current scope:
+
+Milestone 5: `Engineering Knowledge Foundation v0.1` — frozen
+
+Milestone 6: `CircuitIR v0.1`
+
+Milestone 7: `Circuit Planner v0.1` — not started
 
 Implemented now:
 
@@ -32,10 +40,17 @@ Implemented now:
 - Contextual validation that checks DesignPlan traceability against a source RequirementModel revision.
 - An architecture planning application service that asks an LLM for a temporary `DesignPlanDraft`, then deterministically enriches it into a canonical `DesignPlan`.
 - Basic replanning support that preserves the existing design plan identity and stable functional block identities where practical.
+- Strongly typed Engineering Knowledge v0.1 contracts for component facts, sources, evidence, compliance claims, engineering rules, KiCad CAD references, imports, queries, and knowledge contexts.
+- Deterministic in-memory knowledge repository behavior for identity matching, non-destructive enrichment, conflict surfacing, manual entries, and retrieval filtering.
+- Narrow local KiCad symbol/footprint indexing for factual CAD availability.
+- Strongly typed `CircuitIR v0.1` contracts for canonical electrical implementation state.
+- First-class component instances, pins, nets, net connections, implementation mappings, assumptions, open implementation decisions, groups, and interface bindings.
+- Structural CircuitIR validation for duplicate IDs, dangling references, pin ownership, bidirectional pin/net consistency, no-connect semantics, implementation completeness consistency, and pins connected to multiple nets.
+- Contextual CircuitIR validation against source `DesignPlan` traceability and optional `KnowledgeContext` provenance, including every non-null component record reference.
 
 Not implemented yet:
 
-- Chat UI, FastAPI, KiCad/SKiDL generation, SPICE simulation, Circuit IR, component selection, learning, repair, PCB layout, or cloud deployment.
+- Chat UI, FastAPI, KiCad/SKiDL generation, SPICE simulation, component selection, circuit planning, learning, repair, PCB layout, or cloud deployment.
 
 ## Local Tool Settings
 
@@ -193,6 +208,78 @@ python scripts/example_architecture_planner.py
 ```
 
 The example and tests do not require Ollama. Production usage can pass any object implementing the existing `LLMClient.generate_structured(...)` boundary, including the configured local Ollama `qwen-coder` client.
+
+## Milestone 5 Engineering Knowledge
+
+Engineering Knowledge stores factual, evidence-backed knowledge. It does not recommend, rank, choose, or assign components.
+
+Core flow:
+
+```text
+KnowledgeSource
+  -> Evidence
+  -> ComponentRecord facts / EngineeringRule records
+  -> KnowledgeQuery filtering
+  -> KnowledgeContext for future circuit planning
+```
+
+`ComponentRecord` is a fact container keyed by stable identity fields such as manufacturer, part number, and optional variant. It contains generic `ComponentAttribute` values, qualification and compliance claims, local KiCad symbol/footprint references, documentation status, and lifecycle status. It explicitly does not contain selection fields such as ranking score, best candidate, or selected design block.
+
+Unknown information remains unknown. Lack of ISO 26262 evidence, AEC qualification evidence, or datasheet evidence is not treated as verified false. Conflicting evidence is preserved and surfaced for review instead of destructively overwriting existing facts.
+
+`KnowledgeContext` includes the relevant `KnowledgeSource` and `Evidence` objects for returned facts, not just source IDs, so downstream consumers can inspect provenance without extra repository lookups. LLM draft extraction cannot self-verify; verified LLM-extracted evidence requires real source grounding and an independent validation method.
+
+Repository import results distinguish `created`, `updated_existing`, `duplicate`, and `needs_review`. Exact no-op imports return `duplicate`; real enrichment returns `updated_existing`; conflicting knowledge remains non-destructive.
+
+No-match knowledge queries return a valid empty `KnowledgeContext`. Claim enrichment keeps claim subject separate from evidence state/provenance, so unknown-to-verified evidence is preserved as enrichment, exact duplicates are no-ops, and conflicting claim states remain visible.
+
+Run Milestone 5 examples and schemas:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/validate_knowledge_examples.py
+python scripts/export_knowledge_schemas.py
+```
+
+Local KiCad indexing uses configured `KICAD9_SYMBOL_DIR` and `KICAD9_FOOTPRINT_DIR` when no explicit fixture path is supplied. Normal tests use fixtures and do not require a user-local KiCad installation.
+
+## Milestone 6 CircuitIR
+
+`CircuitIR` is the canonical electrical state of the project. It sits after `DesignPlan` and before future EDA-specific artifacts:
+
+```text
+DesignPlan
+  -> CircuitIR
+  -> future KiCad / SKiDL / SPICE outputs
+```
+
+`CircuitIR v0.1` supports unresolved, partially resolved, and resolved component instances. Resolved components require a `component_record_id`; unresolved and partially resolved components can remain structurally valid without one. Any non-null `component_record_id` is still a knowledge reference and is checked by optional knowledge validation.
+
+Pins and nets are first-class objects. Pin identity is independent of KiCad pin labels and package pin numbers. Nets carry explicit connections and roles such as `power`, `ground`, `signal`, `clock`, `analog`, `digital`, and `communication`. A pin on a net must be marked `connected`; unresolved and no-connect pins must appear on no net. Ground nets are not auto-merged; `GND` and `AGND` remain separate unless future planning explicitly connects them.
+
+Traceability from architecture to circuit implementation is recorded through source block IDs and first-class `ImplementationMapping` records. Contextual validation checks CircuitIR references against a source `DesignPlan`, and optional knowledge validation checks referenced component records, sources, and evidence against a supplied `KnowledgeContext`.
+
+`implementation_status` describes implementation completeness, not electrical correctness. A resolved CircuitIR cannot contain unresolved or partial components, unresolved pins, partial mappings, or blocking open implementation decisions. Every implementation mapping must have at least one DesignPlan-side endpoint and at least one CircuitIR-side endpoint.
+
+Run Milestone 6 validation and schema export:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/validate_circuit_ir_example.py
+python scripts/export_circuit_ir_schema.py
+```
+
+The example lives at:
+
+```text
+examples/circuit_ir_v0_1.json
+```
+
+The architecture note lives at:
+
+```text
+docs/architecture/circuit-ir-v0.1.md
+```
 
 ## Core Principle
 

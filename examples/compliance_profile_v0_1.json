@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1",
+  "profile_id": "CP_AUTOMOTIVE_001",
+  "domain": "automotive",
+  "required_standards": [],
+  "preferred_standards": [
+    "ISO_26262"
+  ],
+  "required_qualifications": [
+    "AEC_Q100"
+  ],
+  "preferred_qualifications": [],
+  "metadata": {
+    "created_at": "2026-08-16T00:00:00+05:30",
+    "updated_at": "2026-08-16T00:00:00+05:30",
+    "created_by": "knowledge_fixture"
+  }
+}

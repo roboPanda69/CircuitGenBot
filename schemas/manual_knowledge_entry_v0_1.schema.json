@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "BooleanAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "boolean",
+          "default": "boolean",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "BooleanAttributeValue",
+      "type": "object"
+    },
+    "ComponentIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "manufacturer": {
+          "title": "Manufacturer",
+          "type": "string"
+        },
+        "part_number": {
+          "title": "Part Number",
+          "type": "string"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        }
+      },
+      "required": [
+        "manufacturer",
+        "part_number"
+      ],
+      "title": "ComponentIdentity",
+      "type": "object"
+    },
+    "EnumAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "enum",
+          "default": "enum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "EnumAttributeValue",
+      "type": "object"
+    },
+    "KnowledgeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "title": "Created By",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_by"
+      ],
+      "title": "KnowledgeMetadata",
+      "type": "object"
+    },
+    "KnowledgeState": {
+      "enum": [
+        "verified",
+        "verified_no",
+        "unknown",
+        "conflicting",
+        "unverified"
+      ],
+      "title": "KnowledgeState",
+      "type": "string"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityExactValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exact",
+          "default": "exact",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityExactValue",
+      "type": "object"
+    },
+    "QuantityMaximumValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "maximum",
+          "default": "maximum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityMaximumValue",
+      "type": "object"
+    },
+    "QuantityMinimumValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "minimum",
+          "default": "minimum",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityMinimumValue",
+      "type": "object"
+    },
+    "QuantityNominalValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "nominal",
+          "default": "nominal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "QuantityNominalValue",
+      "type": "object"
+    },
+    "QuantityRangeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "range",
+          "default": "range",
+          "title": "Kind",
+          "type": "string"
+        },
+        "maximum": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "minimum": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "title": "QuantityRangeValue",
+      "type": "object"
+    },
+    "SourceTrustClass": {
+      "enum": [
+        "authoritative",
+        "trusted_secondary",
+        "curated_internal",
+        "inferred",
+        "unverified"
+      ],
+      "title": "SourceTrustClass",
+      "type": "string"
+    },
+    "TextAttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "TextAttributeValue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attribute_name": {
+      "title": "Attribute Name",
+      "type": "string"
+    },
+    "component_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Component Id"
+    },
+    "component_identity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ComponentIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "evidence_state": {
+      "$ref": "#/$defs/KnowledgeState",
+      "default": "unverified"
+    },
+    "manual_entry_id": {
+      "title": "Manual Entry Id",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/KnowledgeMetadata"
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Note"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Description"
+    },
+    "source_trust": {
+      "$ref": "#/$defs/SourceTrustClass",
+      "default": "unverified"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanAttributeValue",
+              "enum": "#/$defs/EnumAttributeValue",
+              "exact": "#/$defs/QuantityExactValue",
+              "maximum": "#/$defs/QuantityMaximumValue",
+              "minimum": "#/$defs/QuantityMinimumValue",
+              "nominal": "#/$defs/QuantityNominalValue",
+              "range": "#/$defs/QuantityRangeValue",
+              "text": "#/$defs/TextAttributeValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/QuantityExactValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityNominalValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityMinimumValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityMaximumValue"
+            },
+            {
+              "$ref": "#/$defs/QuantityRangeValue"
+            },
+            {
+              "$ref": "#/$defs/BooleanAttributeValue"
+            },
+            {
+              "$ref": "#/$defs/TextAttributeValue"
+            },
+            {
+              "$ref": "#/$defs/EnumAttributeValue"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    }
+  },
+  "required": [
+    "manual_entry_id",
+    "attribute_name",
+    "metadata"
+  ],
+  "title": "ManualKnowledgeEntry",
+  "type": "object"
+}

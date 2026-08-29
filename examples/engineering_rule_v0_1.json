@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1",
+  "rule_id": "RULE_IF_001",
+  "category": "interface",
+  "applicability": {
+    "component_category": null,
+    "interface_type": "i2c",
+    "attribute_name": null,
+    "notes": null
+  },
+  "statement": "I2C implementations require pull-up behavior on SDA and SCL.",
+  "severity": "required",
+  "source_ids": [
+    "SRC_RULE_001"
+  ],
+  "status": "active",
+  "metadata": {
+    "created_at": "2026-08-16T00:00:00+05:30",
+    "updated_at": "2026-08-16T00:00:00+05:30",
+    "created_by": "knowledge_fixture"
+  }
+}
