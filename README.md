@@ -20,9 +20,9 @@ System v0.3 current scope:
 
 Milestone 5: `Engineering Knowledge Foundation v0.1` — frozen
 
-Milestone 6: `CircuitIR v0.1`
+Milestone 6: `CircuitIR v0.1` — frozen
 
-Milestone 7: `Circuit Planner v0.1` — not started
+Milestone 7: `Circuit Planner v0.1`
 
 Implemented now:
 
@@ -47,10 +47,14 @@ Implemented now:
 - First-class component instances, pins, nets, net connections, implementation mappings, assumptions, open implementation decisions, groups, and interface bindings.
 - Structural CircuitIR validation for duplicate IDs, dangling references, pin ownership, bidirectional pin/net consistency, no-connect semantics, implementation completeness consistency, and pins connected to multiple nets.
 - Contextual CircuitIR validation against source `DesignPlan` traceability and optional `KnowledgeContext` provenance, including every non-null component record reference.
+- A Circuit Planner v0.1 application service that asks an LLM for `CircuitIRDraft` only, then deterministically enriches and validates canonical `CircuitIR`.
+- Explainable component candidate evaluation using supplied `KnowledgeContext`, with fail-closed hard constraints, preferences, unknown knowledge, no-candidate behavior, forced components, deterministic ordering, and bounded repair.
+- Planner-side provenance policy for values and pins: unsupported LLM pin numbers, resolved-pin claims, values, and parameters are not copied into canonical CircuitIR.
+- Progressive CircuitIR refinement from an optional existing circuit revision while validating lineage and preserving stable object IDs/reference designators where practical.
 
 Not implemented yet:
 
-- Chat UI, FastAPI, KiCad/SKiDL generation, SPICE simulation, component selection, circuit planning, learning, repair, PCB layout, or cloud deployment.
+- Chat UI, FastAPI, KiCad/SKiDL generation, SPICE simulation, verification, learning, repair, PCB layout, or cloud deployment.
 
 ## Local Tool Settings
 
@@ -78,10 +82,18 @@ If using the bundled Codex runtime on this machine:
 
 ## Run Tests
 
-The tests use the standard library test runner so they work without installing extra test packages:
+The canonical setup is to install this repository in editable mode so tests cannot silently import an older installed `schematic_ai` package:
 
 ```powershell
+python -m pip install -e .[dev]
 python -m unittest discover -s tests
+```
+
+If using the bundled Codex runtime without installing the package, set `PYTHONPATH` explicitly to this repository's `src` tree:
+
+```powershell
+$env:PYTHONPATH='src'
+& 'C:\Users\LENOVO\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -m unittest discover -s tests
 ```
 
 ## Generate JSON Schema
@@ -279,6 +291,45 @@ The architecture note lives at:
 
 ```text
 docs/architecture/circuit-ir-v0.1.md
+```
+
+## Milestone 7 Circuit Planner
+
+`CircuitPlanner` is the first synthesis layer that produces canonical electrical implementation state:
+
+```text
+RequirementModel
+  + DesignPlan
+  + KnowledgeContext
+  + optional existing CircuitIR
+  -> LLM-proposed CircuitIRDraft
+  -> deterministic candidate evaluation and enrichment
+  -> validated CircuitIR
+```
+
+The LLM never owns canonical CircuitIR IDs. Draft component, pin, net, and mapping IDs are temporary; `CircuitIREnricher` assigns canonical object IDs, reference designators, revision, traceability, and metadata.
+
+Candidate selection is limited to supplied Engineering Knowledge. A component can be selected only by deterministic evaluation of a known `component_record_id`; fake or unknown IDs are rejected and may trigger bounded repair. Unknown or rejected candidates never resolve canonical components. Candidate evaluation records satisfied constraints, unresolved constraints, rejection reasons, preference matches, value bases, and evidence IDs.
+
+Hard constraints and preferences remain distinct. Unknown hard knowledge stays unknown and can prevent confirmed eligibility. Preferred knowledge, such as ISO 26262 support, may remain unsatisfied without rejecting an otherwise eligible component.
+
+Draft pin details, values, parameters, and assumptions are proposal data. In Milestone 7 they become canonical only with recognized trusted provenance or stable planner-side identity. Assumption identity uses controlled `semantic_topic` plus source and targets; wording changes do not define identity, and duplicate semantic assumption keys are rejected. Pins and values remain unresolved when unsupported. Semantic canonical IDs are independent of draft order across components, refdes, mappings, assumptions, decisions, interface bindings, and generated groups. Continuing reference designators are preserved during refinement, and incompatible existing CircuitIR lineage, including a DesignPlan revision mismatch, returns `needs_input` instead of donating IDs.
+
+The planner supports progressive synthesis. A result can be `partial` with valid non-resolved CircuitIR plus unresolved supporting roles, omitted DesignPlan scope, and structured issues. Expected scope comes from actual DesignPlan implementation evidence, not just hard requirement mappings; open decisions and assumptions explain unresolved work but do not count as coverage. Soft/preferred architecture omissions remain visible but may be non-blocking. `accepted` means structurally resolved for planner scope, not electrically verified. `needs_input` means a blocking user, architecture, or knowledge decision remains. `failed` means draft repair or planner execution failed without accepting invalid canonical CircuitIR.
+
+Run the fake-LLM Circuit Planner example:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/example_circuit_planner.py
+```
+
+The example and tests do not require Ollama. Production usage can pass any object implementing `LLMClient.generate_structured(...)`, including the configured local Ollama `qwen-coder` client.
+
+The architecture note lives at:
+
+```text
+docs/architecture/circuit-planner-v0.1.md
 ```
 
 ## Core Principle
