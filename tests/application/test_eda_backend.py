@@ -18,6 +18,7 @@ from schematic_ai.application.eda import (
     SchematicLayoutStrategy,
     SymbolResolver,
 )
+from schematic_ai.application.eda.checker import parse_sexpr
 from schematic_ai.domain.circuit_ir import CircuitIR
 
 
@@ -234,6 +235,33 @@ def label_at(label, point, uuid_text):
     )
 
 
+def local_label_at(label, point, uuid_text):
+    x, y = point
+    return (
+        f'  (label "{label}"\n'
+        f"    (at {x} {y} 0)\n"
+        f'    (uuid "{uuid_text}")\n'
+        '    (effects (font (size 1.27 1.27)) (justify left bottom))\n'
+        "  )\n"
+    )
+
+
+def annotation_text_at(text, point, uuid_text):
+    x, y = point
+    return (
+        f'  (text "{text}"\n'
+        f"    (at {x} {y} 0)\n"
+        f'    (uuid "{uuid_text}")\n'
+        '    (effects (font (size 1.0 1.0)) (justify left))\n'
+        "  )\n"
+    )
+
+
+def no_connect_at(point, uuid_text):
+    x, y = point
+    return f'  (no_connect (at {x} {y})\n    (uuid "{uuid_text}")\n  )\n'
+
+
 def wire_between(start, end, uuid_text):
     sx, sy = start
     ex, ey = end
@@ -384,6 +412,76 @@ def circuit_with_agnd_connector():
     data["components"].append(j2)
     data["nets"].append(net("NET_AGND", "AGND", [{"component_instance_id": "J_AGND_001", "pin_id": "PIN_J2_1"}], "ground"))
     return CircuitIR.model_validate(data)
+
+
+def circuit_with_expected_no_connect():
+    data = resolved_circuit().model_dump(mode="json")
+    data["components"][0]["pins"][1]["connection_state"] = "no_connect"
+    data["components"][0]["pins"][1]["electrical_type"] = "no_connect"
+    data["nets"][1]["connections"] = [
+        connection
+        for connection in data["nets"][1]["connections"]
+        if connection["pin_id"] != "PIN_J1_2"
+    ]
+    return CircuitIR.model_validate(data)
+
+
+def circuit_with_supported_real_unresolved_pin():
+    resistor = component(
+        "R_LOAD_001",
+        "R1",
+        "resistor",
+        [
+            pin("R_LOAD_001", "PIN_R1_1", "1", "1"),
+            pin("R_LOAD_001", "PIN_R1_PENDING", "2", "2", state="unresolved"),
+        ],
+        role="partially_connected_resistor",
+        implementation="partial",
+        value=quantity_value(10, "kOhm"),
+        symbol=symbol_ref("Device", "R"),
+        footprint=footprint_ref(),
+    )
+    return CircuitIR.model_validate(
+        circuit_data(
+            components=[resistor],
+            nets=[
+                net(
+                    "NET_IN",
+                    "IN",
+                    [{"component_instance_id": "R_LOAD_001", "pin_id": "PIN_R1_1"}],
+                )
+            ],
+            status="partial",
+        )
+    )
+
+
+def circuit_with_placeholder_unresolved_pin():
+    unknown = component(
+        "U_UNKNOWN_001",
+        "U1",
+        "regulator",
+        [
+            pin("U_UNKNOWN_001", "PIN_UNKNOWN_IN", None, "IN", resolution="unresolved"),
+            pin(
+                "U_UNKNOWN_001",
+                "PIN_UNKNOWN_PENDING",
+                None,
+                "PENDING",
+                state="unresolved",
+                resolution="unresolved",
+            ),
+        ],
+        resolution="unresolved",
+        implementation="partial",
+    )
+    return CircuitIR.model_validate(
+        circuit_data(
+            components=[unknown],
+            nets=[net("NET_IN", "IN", [{"component_instance_id": "U_UNKNOWN_001", "pin_id": "PIN_UNKNOWN_IN"}])],
+            status="partial",
+        )
+    )
 
 
 class EDABackendTests(unittest.TestCase):
@@ -1025,6 +1123,32 @@ class EDABackendTests(unittest.TestCase):
         self.assertIn("SchematicAI:PLACEHOLDER_U_DUAL_001", files["circuit.kicad_sch"])
         self.assertIn(GenerationDiagnosticCategory.UNSUPPORTED_SYMBOL_VARIANT, {diagnostic.category for diagnostic in result.diagnostics})
 
+    def test_unsupported_alternate_style_symbol_falls_back_to_placeholder(self):
+        alternate = component(
+            "U_ALT_001",
+            "U1",
+            "other",
+            [pin("U_ALT_001", "PIN_ALT_A", "1", "A")],
+            role="alternate_style_fixture",
+            symbol=symbol_ref("Complex", "AlternateStyle"),
+            footprint=footprint_ref(),
+        )
+        circuit = CircuitIR.model_validate(
+            circuit_data(
+                components=[alternate],
+                nets=[net("NET_A", "A", [{"component_instance_id": "U_ALT_001", "pin_id": "PIN_ALT_A"}])],
+            )
+        )
+
+        result, files = self.generate_kicad(circuit)
+
+        self.assertEqual(result.status, GenerationStatus.PARTIAL)
+        self.assertIn("SchematicAI:PLACEHOLDER_U_ALT_001", files["circuit.kicad_sch"])
+        self.assertIn(
+            GenerationDiagnosticCategory.UNSUPPORTED_SYMBOL_VARIANT,
+            {diagnostic.category for diagnostic in result.diagnostics},
+        )
+
     def test_artifact_checker_detects_accidental_no_connect_on_unresolved_pin(self):
         unknown = component(
             "U_UNKNOWN_001",
@@ -1069,6 +1193,352 @@ class EDABackendTests(unittest.TestCase):
 
         self.assertFalse(check.valid)
         self.assertTrue(any("accidental no-connect" in mismatch for mismatch in check.no_connect_mismatches))
+
+    def test_m8_fv_001_local_label_alias_merge_is_rejected_like_global_label(self):
+        circuit = resolved_circuit()
+        checks = {}
+        for kind, renderer in (("local", local_label_at), ("global", label_at)):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temp_dir:
+                output_dir = Path(temp_dir)
+                result = KiCadBackend().generate(
+                    circuit,
+                    GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+                )
+                self.assertEqual(result.status, GenerationStatus.SUCCESS)
+                schematic_path = output_dir / "circuit.kicad_sch"
+                alias = "".join(
+                    [
+                        renderer("UNINTENDED_ALIAS", connection_point(result, "PIN_J1_1"), "10000000-0000-0000-0000-000000000001"),
+                        renderer("UNINTENDED_ALIAS", connection_point(result, "PIN_R1_2"), "10000000-0000-0000-0000-000000000002"),
+                    ]
+                )
+                schematic_path.write_text(
+                    insert_before_symbol_instances(schematic_path.read_text(encoding="utf-8"), alias),
+                    encoding="utf-8",
+                )
+                checks[kind] = KiCadArtifactChecker().check(
+                    schematic_path=schematic_path,
+                    circuit_ir=circuit,
+                    manifest=result.manifest,
+                )
+
+        self.assertFalse(checks["local"].valid)
+        self.assertFalse(checks["global"].valid)
+        self.assertTrue(any("conflicting canonical labels" in item for item in checks["local"].net_mismatches))
+        self.assertEqual(checks["local"].generated_connectivity, checks["global"].generated_connectivity)
+        self.assertEqual(
+            [item for item in checks["local"].net_mismatches if "conflicting canonical labels" in item],
+            [item for item in checks["global"].net_mismatches if "conflicting canonical labels" in item],
+        )
+
+    def test_m8_fv_001_local_and_global_conflicts_are_order_independent_but_text_is_not_electrical(self):
+        circuit = resolved_circuit()
+        point = None
+        ordered_checks = []
+        for reverse in (False, True):
+            with self.subTest(reverse=reverse), tempfile.TemporaryDirectory() as temp_dir:
+                output_dir = Path(temp_dir)
+                result = KiCadBackend().generate(
+                    circuit,
+                    GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+                )
+                self.assertEqual(result.status, GenerationStatus.SUCCESS)
+                point = connection_point(result, "PIN_J1_1")
+                labels = [
+                    local_label_at("NET_VOUT", point, "10000000-0000-0000-0000-000000000003"),
+                    label_at("NET_VIN", point, "10000000-0000-0000-0000-000000000004"),
+                ]
+                if reverse:
+                    labels.reverse()
+                schematic_path = output_dir / "circuit.kicad_sch"
+                schematic_path.write_text(
+                    insert_before_symbol_instances(schematic_path.read_text(encoding="utf-8"), "".join(labels)),
+                    encoding="utf-8",
+                )
+                ordered_checks.append(
+                    KiCadArtifactChecker().check(
+                        schematic_path=schematic_path,
+                        circuit_ir=circuit,
+                        manifest=result.manifest,
+                    )
+                )
+
+        self.assertFalse(ordered_checks[0].valid)
+        self.assertEqual(ordered_checks[0].net_mismatches, ordered_checks[1].net_mismatches)
+        self.assertTrue(any("conflicting canonical labels" in item for item in ordered_checks[0].net_mismatches))
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            result = KiCadBackend().generate(
+                circuit,
+                GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+            )
+            schematic_path = output_dir / "circuit.kicad_sch"
+            annotation = annotation_text_at(
+                "NET_VOUT",
+                connection_point(result, "PIN_J1_1"),
+                "10000000-0000-0000-0000-000000000005",
+            )
+            schematic_path.write_text(
+                insert_before_symbol_instances(schematic_path.read_text(encoding="utf-8"), annotation),
+                encoding="utf-8",
+            )
+            annotation_check = KiCadArtifactChecker().check(
+                schematic_path=schematic_path,
+                circuit_ir=circuit,
+                manifest=result.manifest,
+            )
+
+        self.assertTrue(annotation_check.valid)
+
+    def test_m8_fv_001_unsupported_or_malformed_electrical_labels_fail_closed(self):
+        circuit = resolved_circuit()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            result = KiCadBackend().generate(
+                circuit,
+                GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+            )
+            self.assertEqual(result.status, GenerationStatus.SUCCESS)
+            schematic_path = output_dir / "circuit.kicad_sch"
+            base = schematic_path.read_text(encoding="utf-8")
+            point = connection_point(result, "PIN_J1_1")
+            unsupported = {
+                "hierarchical label": (
+                    f'  (hierarchical_label "NET_VIN" (shape input) (at {point[0]} {point[1]} 0)\n'
+                    '    (uuid "10000000-0000-0000-0000-000000000006")\n'
+                    '    (effects (font (size 1.27 1.27)))\n'
+                    "  )\n"
+                ),
+                "netclass flag": (
+                    f'  (netclass_flag "Default" (length 2.54) (shape round) (at {point[0]} {point[1]} 0)\n'
+                    '    (uuid "10000000-0000-0000-0000-000000000007")\n'
+                    '    (effects (font (size 1.27 1.27)))\n'
+                    "  )\n"
+                ),
+                "malformed local label": (
+                    '  (label "NET_VIN"\n'
+                    '    (uuid "10000000-0000-0000-0000-000000000008")\n'
+                    '    (effects (font (size 1.27 1.27)))\n'
+                    "  )\n"
+                ),
+            }
+            for name, block in unsupported.items():
+                with self.subTest(name=name):
+                    schematic_path.write_text(insert_before_symbol_instances(base, block), encoding="utf-8")
+                    check = KiCadArtifactChecker().check(
+                        schematic_path=schematic_path,
+                        circuit_ir=circuit,
+                        manifest=result.manifest,
+                    )
+                    self.assertFalse(check.valid)
+                    self.assertTrue(check.parse_errors)
+
+    def test_m8_fv_002_unresolved_pin_electrical_attachments_are_rejected(self):
+        circuit = circuit_with_placeholder_unresolved_pin()
+        mutations = {
+            "wire": lambda result: wire_between(
+                connection_point(result, "PIN_UNKNOWN_PENDING"),
+                connection_point(result, "PIN_UNKNOWN_IN"),
+                "20000000-0000-0000-0000-000000000001",
+            ),
+            "local label": lambda result: local_label_at(
+                "NET_IN",
+                connection_point(result, "PIN_UNKNOWN_PENDING"),
+                "20000000-0000-0000-0000-000000000002",
+            ),
+            "global label": lambda result: label_at(
+                "NET_IN",
+                connection_point(result, "PIN_UNKNOWN_PENDING"),
+                "20000000-0000-0000-0000-000000000003",
+            ),
+            "no-connect": lambda result: no_connect_at(
+                connection_point(result, "PIN_UNKNOWN_PENDING"),
+                "20000000-0000-0000-0000-000000000004",
+            ),
+        }
+        for name, make_mutation in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp_dir:
+                output_dir = Path(temp_dir)
+                result = KiCadBackend().generate(
+                    circuit,
+                    GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+                )
+                self.assertEqual(result.status, GenerationStatus.PARTIAL)
+                schematic_path = output_dir / "circuit.kicad_sch"
+                schematic_path.write_text(
+                    insert_before_symbol_instances(
+                        schematic_path.read_text(encoding="utf-8"),
+                        make_mutation(result),
+                    ),
+                    encoding="utf-8",
+                )
+                check = KiCadArtifactChecker().check(
+                    schematic_path=schematic_path,
+                    circuit_ir=circuit,
+                    manifest=result.manifest,
+                )
+                self.assertFalse(check.valid)
+                self.assertTrue(
+                    any("unresolved pin" in item for item in [*check.net_mismatches, *check.no_connect_mismatches])
+                )
+
+    def test_m8_fv_003_raw_no_connect_markers_are_one_to_one_and_well_formed(self):
+        circuit = circuit_with_expected_no_connect()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            result = KiCadBackend().generate(
+                circuit,
+                GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+            )
+            self.assertEqual(result.status, GenerationStatus.SUCCESS)
+            schematic_path = output_dir / "circuit.kicad_sch"
+            base = schematic_path.read_text(encoding="utf-8")
+            valid_check = KiCadArtifactChecker().check(
+                schematic_path=schematic_path,
+                circuit_ir=circuit,
+                manifest=result.manifest,
+            )
+            self.assertTrue(valid_check.valid)
+            nc_point = connection_point(result, "PIN_J1_2")
+            self.assertEqual(base.count(f"(no_connect (at {nc_point[0]:g} {nc_point[1]:g})"), 1)
+            connected_point = connection_point(result, "PIN_J1_1")
+            malformed = '  (no_connect (at "bad" 1) (uuid "30000000-0000-0000-0000-000000000005"))\n'
+            mutations = {
+                "orphan with no expected endpoint": insert_before_symbol_instances(
+                    base,
+                    no_connect_at((999.0, 999.0), "30000000-0000-0000-0000-000000000001"),
+                ),
+                "duplicate at expected endpoint": insert_before_symbol_instances(
+                    base,
+                    no_connect_at(nc_point, "30000000-0000-0000-0000-000000000002"),
+                ),
+                "marker at connected pin": insert_before_symbol_instances(
+                    base,
+                    no_connect_at(connected_point, "30000000-0000-0000-0000-000000000003"),
+                ),
+                "misplaced marker near expected endpoint": base.replace(
+                    f"(no_connect (at {nc_point[0]:g} {nc_point[1]:g})",
+                    f"(no_connect (at {nc_point[0] + 0.01:g} {nc_point[1]:g})",
+                    1,
+                ),
+                "malformed marker": insert_before_symbol_instances(base, malformed),
+                "all expected plus extra orphan": insert_before_symbol_instances(
+                    base,
+                    no_connect_at((998.0, 998.0), "30000000-0000-0000-0000-000000000006"),
+                ),
+            }
+            for name, schematic in mutations.items():
+                with self.subTest(name=name):
+                    schematic_path.write_text(schematic, encoding="utf-8")
+                    check = KiCadArtifactChecker().check(
+                        schematic_path=schematic_path,
+                        circuit_ir=circuit,
+                        manifest=result.manifest,
+                    )
+                    self.assertFalse(check.valid)
+
+    def test_m8_fv_004_document_parser_rejects_multiple_top_level_expressions_and_atoms(self):
+        circuit = resolved_circuit()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir)
+            result = KiCadBackend().generate(
+                circuit,
+                GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+            )
+            schematic_path = output_dir / "circuit.kicad_sch"
+            base = schematic_path.read_text(encoding="utf-8")
+            invalid_documents = {
+                "leading expression": "(extra value)\n" + base,
+                "trailing expression": base + "(extra value)\n",
+                "leading atom": "foo\n" + base,
+                "trailing atom": base + "foo\n",
+                "two schematic roots": base + base,
+            }
+            for name, schematic in invalid_documents.items():
+                with self.subTest(name=name):
+                    schematic_path.write_text(schematic, encoding="utf-8")
+                    check = KiCadArtifactChecker().check(
+                        schematic_path=schematic_path,
+                        circuit_ir=circuit,
+                        manifest=result.manifest,
+                    )
+                    self.assertFalse(check.valid)
+                    self.assertTrue(check.parse_errors)
+
+        self.assertEqual(parse_sexpr("(kicad_sch (nested (child value)))")[0], "kicad_sch")
+        for malformed in ("(kicad_sch", '(kicad_sch "unterminated)'):
+            with self.subTest(malformed=malformed):
+                with self.assertRaises(ValueError):
+                    parse_sexpr(malformed)
+
+    def test_m8_fv_005_supported_real_symbol_keeps_unresolved_pin_structurally_present(self):
+        circuit = circuit_with_supported_real_unresolved_pin()
+        result, files = self.generate_kicad(circuit)
+
+        self.assertEqual(result.status, GenerationStatus.PARTIAL)
+        self.assertTrue(result.manifest.metadata["artifact_check"]["valid"])
+        self.assertEqual(result.manifest.placeholders, [])
+        self.assertIn('(lib_id "Device:R")', files["circuit.kicad_sch"])
+        placed = component_symbol_block(files["circuit.kicad_sch"], "R_LOAD_001")
+        self.assertIn('(pin "1"', placed)
+        self.assertIn('(pin "2"', placed)
+        endpoint = endpoint_for(result, "PIN_R1_PENDING")
+        self.assertEqual(endpoint["kicad_pin_number"], "2")
+
+        pin_point = endpoint["connection_point"]
+        self.assertNotIn(f'(global_label "NET_IN"\n    (shape input)\n    (at {pin_point["x"]} {pin_point["y"]}', files["circuit.kicad_sch"])
+        self.assertNotIn(f'(no_connect (at {pin_point["x"]} {pin_point["y"]})', files["circuit.kicad_sch"])
+
+    def test_m8_fv_005_supported_real_unresolved_pin_corruption_is_rejected(self):
+        circuit = circuit_with_supported_real_unresolved_pin()
+        mutations = {
+            "wire": lambda result: wire_between(
+                connection_point(result, "PIN_R1_PENDING"),
+                connection_point(result, "PIN_R1_1"),
+                "50000000-0000-0000-0000-000000000001",
+            ),
+            "local label": lambda result: local_label_at(
+                "NET_IN",
+                connection_point(result, "PIN_R1_PENDING"),
+                "50000000-0000-0000-0000-000000000002",
+            ),
+            "global label": lambda result: label_at(
+                "NET_IN",
+                connection_point(result, "PIN_R1_PENDING"),
+                "50000000-0000-0000-0000-000000000003",
+            ),
+            "no-connect": lambda result: no_connect_at(
+                connection_point(result, "PIN_R1_PENDING"),
+                "50000000-0000-0000-0000-000000000004",
+            ),
+        }
+        for name, make_mutation in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp_dir:
+                output_dir = Path(temp_dir)
+                result = KiCadBackend().generate(
+                    circuit,
+                    GenerationContext(output_dir=output_dir, kicad_symbol_dir=FIXTURE_SYMBOL_DIR),
+                )
+                self.assertEqual(result.status, GenerationStatus.PARTIAL)
+                self.assertTrue(result.manifest.metadata["artifact_check"]["valid"])
+                schematic_path = output_dir / "circuit.kicad_sch"
+                schematic_path.write_text(
+                    insert_before_symbol_instances(
+                        schematic_path.read_text(encoding="utf-8"),
+                        make_mutation(result),
+                    ),
+                    encoding="utf-8",
+                )
+                check = KiCadArtifactChecker().check(
+                    schematic_path=schematic_path,
+                    circuit_ir=circuit,
+                    manifest=result.manifest,
+                )
+                self.assertFalse(check.valid)
+                self.assertTrue(
+                    any("unresolved pin" in item for item in [*check.net_mismatches, *check.no_connect_mismatches])
+                )
 
     def test_generation_status_is_gated_by_artifact_checker(self):
         class RejectingChecker:

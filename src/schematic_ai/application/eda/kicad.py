@@ -228,11 +228,7 @@ class KiCadBackend(EDABackend):
                 symbol_definition=symbol_definition,
             )
             endpoint_pin_ids = {endpoint.circuit_pin_id for endpoint in pin_endpoints}
-            required_endpoint_pin_ids = {
-                pin.pin_id
-                for pin in component.pins
-                if pin.connection_state in {PinConnectionState.CONNECTED, PinConnectionState.NO_CONNECT}
-            }
+            required_endpoint_pin_ids = {pin.pin_id for pin in component.pins}
             missing_endpoint_pin_ids = sorted(required_endpoint_pin_ids - endpoint_pin_ids)
             if missing_endpoint_pin_ids and not symbol_resolution.requires_placeholder and context.allow_placeholders:
                 diagnostics.append(
@@ -607,8 +603,22 @@ class KiCadBackend(EDABackend):
             f'    (property "CircuitIR_ID" "{_sexpr_escape(component.instance_id)}" (at {_coord(placement.at.x)} {_coord(placement.at.y + 12.0)} 0) (effects (font (size 1.0 1.0)) hide))',
             f'    (property "SchematicAI_Status" "{_sexpr_escape("PLACEHOLDER" if symbol_resolution.requires_placeholder else "RESOLVED_SYMBOL")}" (at {_coord(placement.at.x)} {_coord(placement.at.y + 14.0)} 0) (effects (font (size 1.0 1.0)) hide))',
         ]
-        for pin_id, pin_number in view["pin_numbers_by_pin_id"].items():
-            lines.append(f'    (pin "{_sexpr_escape(pin_number)}" (uuid "{self._uuid_text("symbol-pin", component.instance_id, pin_id)}"))')
+        pin_ids_by_number = {
+            pin_number: pin_id
+            for pin_id, pin_number in view["pin_numbers_by_pin_id"].items()
+        }
+        symbol_definition: KiCadSymbolDefinition | None = view["symbol_definition"]
+        placed_pin_numbers = (
+            list(symbol_definition.pin_points)
+            if symbol_definition is not None
+            else list(pin_ids_by_number)
+        )
+        for pin_number in placed_pin_numbers:
+            pin_identity = pin_ids_by_number.get(pin_number, f"STRUCTURAL_PIN_{pin_number}")
+            lines.append(
+                f'    (pin "{_sexpr_escape(pin_number)}" '
+                f'(uuid "{self._uuid_text("symbol-pin", component.instance_id, pin_identity)}"))'
+            )
         lines.append("  )")
         for index, pin in enumerate(component.pins):
             net_name = self._net_name_for_pin(component.instance_id, pin.pin_id, view)

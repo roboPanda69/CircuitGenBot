@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from schematic_ai.domain.circuit_ir import (
     ComponentInstance,
     ComponentResolutionStatus,
-    PinConnectionState,
     PinResolutionStatus,
 )
 from schematic_ai.domain.knowledge import FootprintReference, SymbolReference
@@ -73,8 +72,6 @@ class PinMappingResolver:
 
         pin_numbers: dict[str, str] = {}
         for pin in component.pins:
-            if pin.connection_state == PinConnectionState.UNRESOLVED:
-                continue
             if pin.resolution_status != PinResolutionStatus.RESOLVED or pin.pin_number is None:
                 return PinMappingResolution(
                     pin_numbers_by_pin_id={},

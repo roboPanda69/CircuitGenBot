@@ -20,4 +20,23 @@
       )
     )
   )
+  (symbol "AlternateStyle"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "AlternateStyle" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+    (symbol "AlternateStyle_0_1"
+      (pin passive line (at -5.08 0 0) (length 2.54)
+        (name "A" (effects (font (size 1 1))))
+        (number "1" (effects (font (size 1 1))))
+      )
+    )
+    (symbol "AlternateStyle_0_2"
+      (pin passive inverted (at -5.08 0 0) (length 2.54)
+        (name "A" (effects (font (size 1 1))))
+        (number "1" (effects (font (size 1 1))))
+      )
+    )
+  )
 )

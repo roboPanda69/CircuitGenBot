@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from math import isfinite
 from pathlib import Path
 from typing import Any
 from uuid import UUID
@@ -89,14 +90,29 @@ class ParsedSymbolPath:
     duplicate_fields: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ElectricalLabel:
+    kind: str
+    name: str
+    point: tuple[float, float]
+    raw_index: int
+
+
+@dataclass(frozen=True)
+class ParsedNoConnectMarker:
+    point: tuple[float, float]
+    uuid: str
+    raw_index: int
+
+
 @dataclass
 class KiCadElectricalGraph:
     nodes: set[tuple[float, float]] = field(default_factory=set)
     wire_edges: list[tuple[tuple[float, float], tuple[float, float]]] = field(default_factory=list)
     pin_endpoints: dict[str, tuple[float, float]] = field(default_factory=dict)
     junctions: set[tuple[float, float]] = field(default_factory=set)
-    labels: dict[tuple[float, float], list[str]] = field(default_factory=dict)
-    no_connects: set[tuple[float, float]] = field(default_factory=set)
+    labels: list[ElectricalLabel] = field(default_factory=list)
+    no_connects: list[ParsedNoConnectMarker] = field(default_factory=list)
 
 
 class DisjointSet:
@@ -144,6 +160,8 @@ class KiCadArtifactChecker:
         symbols = symbol_parse_result.parsed_symbols
         symbol_paths = self._symbol_paths(root)
         endpoint_records = self._endpoint_records(root)
+        electrical_labels, electrical_label_errors = self._electrical_labels(root)
+        no_connect_markers, no_connect_parse_errors = self._no_connect_markers(root)
         manifest_pin_numbers = self._manifest_pin_numbers(manifest)
         structural_errors = self._structural_errors(
             root,
@@ -154,6 +172,8 @@ class KiCadArtifactChecker:
             symbol_paths=symbol_paths,
             manifest_pin_numbers=manifest_pin_numbers,
         )
+        structural_errors.extend(electrical_label_errors)
+        structural_errors.extend(no_connect_parse_errors)
         if structural_errors:
             return ArtifactCheckResult(
                 valid=False,
@@ -206,8 +226,7 @@ class KiCadArtifactChecker:
             for pin in component.pins:
                 kicad_pin_number = manifest_pin_numbers.get(component.instance_id, {}).get(pin.pin_id)
                 if kicad_pin_number is None:
-                    if pin.connection_state != PinConnectionState.UNRESOLVED:
-                        endpoint_mismatches.append(f"missing generated pin mapping for {pin.pin_id}")
+                    endpoint_mismatches.append(f"missing generated pin mapping for {pin.pin_id}")
                     continue
                 relative = symbol_pins.get(kicad_pin_number)
                 if relative is None:
@@ -230,7 +249,7 @@ class KiCadArtifactChecker:
             elif endpoint.point != endpoint_record.point:
                 endpoint_mismatches.append(f"endpoint record point mismatch for {endpoint_record.circuit_pin_id}")
 
-        graph = self._electrical_graph(root, endpoints)
+        graph = self._electrical_graph(root, endpoints, electrical_labels, no_connect_markers)
         connected_components = self._connected_components(graph)
         point_to_component = {
             point: component_root
@@ -243,6 +262,9 @@ class KiCadArtifactChecker:
         expected = _expected_connectivity(circuit_ir)
         generated = {net_id: [] for net_id in expected}
         net_mismatches = list(endpoint_mismatches)
+        for label in electrical_labels:
+            if label.name not in label_to_net:
+                net_mismatches.append(f"unexpected {label.kind} electrical label {label.name!r} at {label.point}")
         for component_root, labels in component_labels.items():
             canonical_net_ids = sorted({label_to_net[label] for label in labels if label in label_to_net})
             if len(canonical_net_ids) > 1:
@@ -265,25 +287,67 @@ class KiCadArtifactChecker:
             if generated.get(net_id, []) != expected_keys:
                 net_mismatches.append(f"{net_id} expected {expected_keys} generated {generated.get(net_id, [])}")
 
+        marker_counts: dict[tuple[float, float], int] = {}
+        for marker in no_connect_markers:
+            marker_counts[marker.point] = marker_counts.get(marker.point, 0) + 1
+        for component in circuit_ir.components:
+            for pin in component.pins:
+                if pin.connection_state != PinConnectionState.UNRESOLVED:
+                    continue
+                endpoint = endpoints.get(pin.pin_id)
+                if endpoint is None:
+                    continue
+                component_root = point_to_component.get(endpoint.point)
+                attached_labels = sorted(set(component_labels.get(component_root, []))) if component_root is not None else []
+                if attached_labels:
+                    net_mismatches.append(f"unresolved pin {endpoint.key} has electrical labels {attached_labels}")
+                if any(endpoint.point in edge for edge in graph.wire_edges):
+                    net_mismatches.append(f"unresolved pin {endpoint.key} is wired")
+
         expected_no_connects = _expected_no_connects(circuit_ir)
         generated_no_connects: list[str] = []
-        accidental_no_connects: list[str] = []
         no_connect_mismatches: list[str] = []
-        for pin in (pin for component in circuit_ir.components for pin in component.pins):
-            endpoint = endpoints.get(pin.pin_id)
-            if endpoint is None:
+        pin_by_id = {pin.pin_id: pin for component in circuit_ir.components for pin in component.pins}
+        endpoints_by_point: dict[tuple[float, float], list[ParsedPinEndpoint]] = {}
+        for endpoint in endpoints.values():
+            endpoints_by_point.setdefault(endpoint.point, []).append(endpoint)
+        for marker in no_connect_markers:
+            matching_endpoints = endpoints_by_point.get(marker.point, [])
+            if not matching_endpoints:
+                no_connect_mismatches.append(f"orphan no-connect marker {marker.uuid} at {marker.point}")
                 continue
-            if endpoint.point in graph.no_connects:
-                key = endpoint.key
-                if pin.connection_state == PinConnectionState.NO_CONNECT:
-                    generated_no_connects.append(key)
+            if len(matching_endpoints) != 1:
+                no_connect_mismatches.append(
+                    f"ambiguous no-connect marker {marker.uuid} at {marker.point} matches "
+                    f"{sorted(endpoint.key for endpoint in matching_endpoints)}"
+                )
+                continue
+            endpoint = matching_endpoints[0]
+            pin = pin_by_id[endpoint.circuit_pin_id]
+            if pin.connection_state != PinConnectionState.NO_CONNECT:
+                no_connect_mismatches.append(
+                    f"accidental no-connect marker on {pin.connection_state.value} pin {endpoint.key}"
+                )
+        for component in circuit_ir.components:
+            for pin in component.pins:
+                if pin.connection_state != PinConnectionState.NO_CONNECT:
+                    continue
+                endpoint = endpoints.get(pin.pin_id)
+                if endpoint is None:
+                    continue
+                count = marker_counts.get(endpoint.point, 0)
+                matching_endpoints = endpoints_by_point.get(endpoint.point, [])
+                if count == 1 and len(matching_endpoints) == 1:
+                    generated_no_connects.append(endpoint.key)
+                elif count == 0:
+                    no_connect_mismatches.append(f"no-connect pin {endpoint.key} has no marker")
+                elif count > 1:
+                    no_connect_mismatches.append(f"no-connect pin {endpoint.key} has {count} duplicate markers")
                 else:
-                    accidental_no_connects.append(key)
+                    no_connect_mismatches.append(f"no-connect pin {endpoint.key} does not have a one-to-one marker")
         generated_no_connects = sorted(generated_no_connects)
         if generated_no_connects != expected_no_connects:
             no_connect_mismatches.append(f"expected no-connects {expected_no_connects} generated {generated_no_connects}")
-        if accidental_no_connects:
-            no_connect_mismatches.append(f"accidental no-connect markers on {sorted(accidental_no_connects)}")
         for component in circuit_ir.components:
             for pin in component.pins:
                 if pin.connection_state != PinConnectionState.NO_CONNECT:
@@ -675,26 +739,96 @@ class KiCadArtifactChecker:
                 continue
         return endpoints
 
-    def _electrical_graph(self, root: list[SExpr], endpoints: dict[str, ParsedPinEndpoint]) -> KiCadElectricalGraph:
+    def _electrical_labels(self, root: list[SExpr]) -> tuple[list[ElectricalLabel], list[str]]:
+        labels: list[ElectricalLabel] = []
+        errors: list[str] = []
+        for unsupported_head in ("hierarchical_label", "netclass_flag"):
+            if children(root, unsupported_head):
+                errors.append(f"unsupported electrical label form {unsupported_head}")
+        raw_index = 0
+        for head, kind in (("label", "local"), ("global_label", "global")):
+            for label in children(root, head):
+                label_errors: list[str] = []
+                name = atom(label, 1)
+                if name is None or not name.strip():
+                    label_errors.append("missing nonblank name")
+                at_nodes = children(label, "at")
+                uuid_nodes = children(label, "uuid")
+                if len(at_nodes) != 1:
+                    label_errors.append(f"expected exactly one at field, found {len(at_nodes)}")
+                if len(uuid_nodes) != 1:
+                    label_errors.append(f"expected exactly one uuid field, found {len(uuid_nodes)}")
+                point = _strict_at_point(at_nodes[0], require_orientation=True) if len(at_nodes) == 1 else None
+                if point is None and len(at_nodes) == 1:
+                    label_errors.append("malformed at field")
+                uuid_text = atom(uuid_nodes[0], 1) if len(uuid_nodes) == 1 else None
+                if uuid_text is None and len(uuid_nodes) == 1:
+                    label_errors.append("malformed uuid field")
+                elif uuid_text is not None:
+                    try:
+                        UUID(uuid_text)
+                    except ValueError:
+                        label_errors.append(f"malformed uuid {uuid_text!r}")
+                if label_errors:
+                    errors.append(f"malformed {kind} electrical label {raw_index}: {', '.join(label_errors)}")
+                else:
+                    assert name is not None and point is not None and uuid_text is not None
+                    labels.append(ElectricalLabel(kind=kind, name=name, point=point, raw_index=raw_index))
+                raw_index += 1
+        return labels, errors
+
+    def _no_connect_markers(self, root: list[SExpr]) -> tuple[list[ParsedNoConnectMarker], list[str]]:
+        markers: list[ParsedNoConnectMarker] = []
+        errors: list[str] = []
+        for raw_index, marker in enumerate(children(root, "no_connect")):
+            marker_errors: list[str] = []
+            at_nodes = children(marker, "at")
+            uuid_nodes = children(marker, "uuid")
+            field_names = [atom(field, 0) or "" for field in marker[1:] if isinstance(field, list)]
+            unsupported_fields = sorted(set(field_names) - {"at", "uuid"})
+            if unsupported_fields:
+                marker_errors.append(f"unsupported fields {unsupported_fields}")
+            if any(not isinstance(item, list) for item in marker[1:]):
+                marker_errors.append("unexpected atom")
+            if len(at_nodes) != 1:
+                marker_errors.append(f"expected exactly one at field, found {len(at_nodes)}")
+            if len(uuid_nodes) != 1:
+                marker_errors.append(f"expected exactly one uuid field, found {len(uuid_nodes)}")
+            point = _strict_at_point(at_nodes[0], require_orientation=False) if len(at_nodes) == 1 else None
+            if point is None and len(at_nodes) == 1:
+                marker_errors.append("malformed at field")
+            uuid_text = atom(uuid_nodes[0], 1) if len(uuid_nodes) == 1 else None
+            if uuid_text is None and len(uuid_nodes) == 1:
+                marker_errors.append("malformed uuid field")
+            elif uuid_text is not None:
+                try:
+                    UUID(uuid_text)
+                except ValueError:
+                    marker_errors.append(f"malformed uuid {uuid_text!r}")
+            if marker_errors:
+                errors.append(f"malformed no-connect marker {raw_index}: {', '.join(marker_errors)}")
+            else:
+                assert point is not None and uuid_text is not None
+                markers.append(ParsedNoConnectMarker(point=point, uuid=uuid_text, raw_index=raw_index))
+        return markers, errors
+
+    def _electrical_graph(
+        self,
+        root: list[SExpr],
+        endpoints: dict[str, ParsedPinEndpoint],
+        electrical_labels: list[ElectricalLabel],
+        no_connect_markers: list[ParsedNoConnectMarker],
+    ) -> KiCadElectricalGraph:
         graph = KiCadElectricalGraph()
         for endpoint in endpoints.values():
             graph.nodes.add(endpoint.point)
             graph.pin_endpoints[endpoint.key] = endpoint.point
-        for label in children(root, "global_label"):
-            name = atom(label, 1)
-            at_expr = first_child(label, "at")
-            if name is None or at_expr is None:
-                continue
-            point = coord_from_at(at_expr)
-            graph.nodes.add(point)
-            graph.labels.setdefault(point, []).append(name)
-        for no_connect in children(root, "no_connect"):
-            at_expr = first_child(no_connect, "at")
-            if at_expr is None:
-                continue
-            point = coord_from_at(at_expr)
-            graph.nodes.add(point)
-            graph.no_connects.add(point)
+        for label in electrical_labels:
+            graph.nodes.add(label.point)
+            graph.labels.append(label)
+        for marker in no_connect_markers:
+            graph.nodes.add(marker.point)
+            graph.no_connects.append(marker)
         for junction in children(root, "junction"):
             at_expr = first_child(junction, "at")
             if at_expr is None:
@@ -722,9 +856,8 @@ class KiCadArtifactChecker:
         for start, end in graph.wire_edges:
             dsu.union(start, end)
         labels_by_name: dict[str, list[tuple[float, float]]] = {}
-        for point, labels in graph.labels.items():
-            for label in labels:
-                labels_by_name.setdefault(label, []).append(point)
+        for label in graph.labels:
+            labels_by_name.setdefault(label.name, []).append(label.point)
         for points in labels_by_name.values():
             for point in points[1:]:
                 dsu.union(points[0], point)
@@ -739,9 +872,9 @@ class KiCadArtifactChecker:
         point_to_component: dict[tuple[float, float], tuple[float, float]],
     ) -> dict[tuple[float, float], list[str]]:
         labels: dict[tuple[float, float], list[str]] = {}
-        for point, label_names in graph.labels.items():
-            component_root = point_to_component.get(point, point)
-            labels.setdefault(component_root, []).extend(label_names)
+        for label in graph.labels:
+            component_root = point_to_component.get(label.point, label.point)
+            labels.setdefault(component_root, []).append(label.name)
         return labels
 
     def _label_to_net(self, manifest: GeneratedArtifactManifest) -> dict[str, str]:
@@ -772,7 +905,7 @@ def parse_sexpr(text: str) -> SExpr:
     tokens = tokenize(text)
     stack: list[list[SExpr]] = []
     current: list[SExpr] | None = None
-    root: SExpr | None = None
+    roots: list[SExpr] = []
     for token in tokens:
         if token == "(":
             new_expr: list[SExpr] = []
@@ -783,17 +916,23 @@ def parse_sexpr(text: str) -> SExpr:
         elif token == ")":
             if current is None:
                 raise ValueError("unexpected closing parenthesis")
-            root = current
-            current = stack.pop() if stack else None
+            completed = current
+            if stack:
+                current = stack.pop()
+            else:
+                roots.append(completed)
+                current = None
         else:
             if current is None:
                 raise ValueError("atom outside expression")
             current.append(token)
     if current is not None or stack:
         raise ValueError("unclosed S-expression")
-    if root is None:
+    if not roots:
         raise ValueError("empty S-expression")
-    return root
+    if len(roots) != 1:
+        raise ValueError(f"expected exactly one top-level S-expression, found {len(roots)}")
+    return roots[0]
 
 
 def tokenize(text: str) -> list[str]:
@@ -890,6 +1029,22 @@ def coord_from_xy(expr: list[SExpr]) -> tuple[float, float]:
 
 def coord_from_at(expr: list[SExpr]) -> tuple[float, float]:
     return (_round_coord(float(atom(expr, 1) or 0)), _round_coord(float(atom(expr, 2) or 0)))
+
+
+def _strict_at_point(expr: list[SExpr], *, require_orientation: bool) -> tuple[float, float] | None:
+    expected_length = 4 if require_orientation else 3
+    if len(expr) != expected_length:
+        return None
+    values = [atom(expr, index) for index in range(1, expected_length)]
+    if any(value is None for value in values):
+        return None
+    try:
+        numbers = [float(value) for value in values if value is not None]
+    except ValueError:
+        return None
+    if not all(isfinite(number) for number in numbers):
+        return None
+    return (_round_coord(numbers[0]), _round_coord(numbers[1]))
 
 
 def point_on_segment(point: tuple[float, float], start: tuple[float, float], end: tuple[float, float]) -> bool:

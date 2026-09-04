@@ -85,7 +85,7 @@ CircuitIR nets are authoritative. KiCad connectivity is actual generated electri
 
 Generated manifest metadata records the expected net-to-pin connectivity from CircuitIR, but the artifact checker reconstructs connectivity from the emitted `.kicad_sch` itself. Ground-like nets such as `GND`, `AGND`, and `DGND` remain separate unless CircuitIR explicitly connects them.
 
-`no_connect` pins are emitted distinctly from `unresolved` pins. No-connect markers are placed at exact generated pin endpoints. An unresolved pin is never converted into an intentional no-connect.
+`no_connect` pins are emitted distinctly from `unresolved` pins. No-connect markers are placed at exact generated pin endpoints. The checker accounts for every raw marker and requires a one-to-one match with an expected `no_connect` endpoint; orphan, duplicate, malformed, misplaced, connected-pin, and unresolved-pin markers are invalid. An unresolved pin remains structurally present but must have no wire, electrical label, or no-connect attachment.
 
 ## Layout
 
@@ -103,7 +103,7 @@ This status does not imply electrical verification.
 
 ## Artifact Checker
 
-`KiCadArtifactChecker` is a generated-artifact structural and electrical-graph checker. It parses the emitted `.kicad_sch`, validates the root `kicad_sch` form, KiCad 9 schematic version `20250114`, `schematic_ai` generator, UUID syntax, required root sections, root `sheet_instances`, embedded symbol definitions, placed symbol instances, `symbol_instances` entries, refdes/value properties, pin endpoint metadata, placeholders, labels, junctions, wires, and no-connect markers.
+`KiCadArtifactChecker` is a generated-artifact structural and electrical-graph checker. It requires exactly one complete top-level `kicad_sch` expression, then validates KiCad 9 schematic version `20250114`, `schematic_ai` generator, UUID syntax, required root sections, root `sheet_instances`, embedded symbol definitions, placed symbol instances, `symbol_instances` entries, refdes/value properties, pin endpoint metadata, placeholders, labels, junctions, wires, and no-connect markers.
 
 Structural validation runs before graph comparison. The manifest can state what the backend expected, but it cannot repair or replace missing artifact structure. If the placed symbol, pin records, unit, path, reference, value, or library identity is absent or incoherent in the `.kicad_sch`, the artifact is invalid even when manifest metadata still contains the intended mapping. Any structural failure forces both `ArtifactCheckResult.valid = false` and final `GenerationResult`/manifest status to `failed`.
 
@@ -119,7 +119,7 @@ Every placed symbol UUID must have exactly one matching `symbol_instances/path` 
 
 `lib_id` belongs to the native placed `(symbol ...)`, not to `symbol_instances/path`. Library identity is checked by relating that placed `lib_id` to the exact embedded symbol definition, the CircuitIR-backed expected representation, and the component's manifest object mapping. Application-specific source and library traceability remains in manifest metadata rather than private `.kicad_sch` path fields.
 
-The reconstructed graph contains coordinate nodes, wire edges, pin endpoints, explicit junctions, labels as a multimap/set, no-connect points, and connected components. Wire segments are split at pins, labels, no-connects, and junctions that lie on the segment. Connected components are built with a disjoint-set union over wire edges and same-name global labels.
+The reconstructed graph contains coordinate nodes, wire edges, pin endpoints, explicit junctions, typed electrical labels as a multimap/set, raw no-connect markers, and connected components. Local and global electrical labels have equivalent single-sheet graph treatment and are never conflated with ordinary annotation text. Unsupported electrical label forms fail closed. Wire segments are split at pins, labels, no-connects, and junctions that lie on the segment. Connected components are built with a disjoint-set union over wire edges and same-name supported electrical labels.
 
 The checker compares connected components against CircuitIR nets and detects missing endpoint connections, extra endpoint connections, split nets, merged nets, conflicting labels/net aliases, unintended `GND`/`AGND` style merges, accidental no-connect markers, and no-connect pins that are also wired or label-connected.
 
