@@ -16,13 +16,19 @@ Milestone 3: `DesignPlan v0.1`
 
 Milestone 4: `Architecture Planner v0.1`
 
-System v0.3 current scope:
+System v0.3 frozen scope:
 
 Milestone 5: `Engineering Knowledge Foundation v0.1` — frozen
 
 Milestone 6: `CircuitIR v0.1` — frozen
 
-Milestone 7: `Circuit Planner v0.1`
+Milestone 7: `Circuit Planner v0.1` — frozen
+
+System v0.4 current scope:
+
+Milestone 8: `EDA Backend v0.1`
+
+Milestone 9: `Localhost Application v0.1` — not started
 
 Implemented now:
 
@@ -51,10 +57,12 @@ Implemented now:
 - Explainable component candidate evaluation using supplied `KnowledgeContext`, with fail-closed hard constraints, preferences, unknown knowledge, no-candidate behavior, forced components, deterministic ordering, and bounded repair.
 - Planner-side provenance policy for values and pins: unsupported LLM pin numbers, resolved-pin claims, values, and parameters are not copied into canonical CircuitIR.
 - Progressive CircuitIR refinement from an optional existing circuit revision while validating lineage and preserving stable object IDs/reference designators where practical.
+- A one-way EDA Backend v0.1 application layer that translates canonical `CircuitIR` into derived KiCad 9 schematic artifacts, optional Python circuit representation, generation diagnostics, and traceability manifests.
+- Strict EDA trust boundaries for verified symbols, independent footprint diagnostics, exact pin mapping, editable placeholders, no-connect preservation, net identity preservation, deterministic layout, and deterministic backend IDs.
 
 Not implemented yet:
 
-- Chat UI, FastAPI, KiCad/SKiDL generation, SPICE simulation, verification, learning, repair, PCB layout, or cloud deployment.
+- Chat UI, FastAPI, localhost web app, KiCad-to-CircuitIR round-trip, SPICE simulation, verification, learning, repair, PCB layout, or cloud deployment.
 
 ## Local Tool Settings
 
@@ -330,6 +338,46 @@ The architecture note lives at:
 
 ```text
 docs/architecture/circuit-planner-v0.1.md
+```
+
+## Milestone 8 EDA Backend
+
+`EDA Backend v0.1` converts canonical `CircuitIR` into derived EDA artifacts:
+
+```text
+CircuitIR
+  -> KiCadBackend / optional PythonCircuitRepresentationBackend
+  -> generated/circuit.kicad_sch
+  -> generated/circuit.py
+  -> generated/artifact_manifest.json
+  -> generated/generation_report.json
+```
+
+Generated files are not canonical. KiCad edits are ordinary external artifact edits and do not update CircuitIR in Milestone 8.
+
+Symbol resolution uses only verified `SymbolReference` data already present in CircuitIR/Engineering Knowledge and a loadable KiCad symbol definition. Trusted KiCad symbol subtrees are preserved during embedding with only controlled symbol-name rewriting. Milestone 8 supports simple single-unit, single-style symbols; multi-unit or alternate-style symbols fall back to editable placeholders with diagnostics. Footprint resolution is independent from symbol resolution, so a missing footprint can produce a partial schematic generation result without blocking schematic output. Exact pin mapping is used only when CircuitIR carries resolved pin numbers and the emitted symbol has matching pin endpoints; otherwise the backend emits diagnostics and uses editable placeholders where safe.
+
+KiCad net labels are attached at actual generated pin endpoints, and no-connect markers are attached to exact no-connect endpoints. `KiCadArtifactChecker` parses the generated `.kicad_sch`, validates KiCad 9 root structure/version/UUIDs/sheet instances/symbol instances, requires coherent placed-symbol/path/pin records for every represented component, reconstructs an electrical graph from wires, junctions, labels, pin endpoints, and no-connects, and gates `GenerationResult.status`.
+
+Run the Milestone 8 example:
+
+```powershell
+$env:PYTHONPATH='src'
+python scripts/example_eda_backend.py
+```
+
+This writes derived artifacts under:
+
+```text
+generated/milestone_8/
+```
+
+Normal tests use synthetic fixtures and do not require local KiCad, Ollama, internet access, or the KiCad GUI.
+
+The architecture note lives at:
+
+```text
+docs/architecture/eda-backend-v0.1.md
 ```
 
 ## Core Principle

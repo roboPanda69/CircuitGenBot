@@ -1,0 +1,811 @@
+{
+  "manifest_id": "MANIFEST_CIR_0001_REV_1_KICAD",
+  "source_circuit_id": "CIR_0001",
+  "source_circuit_revision": 1,
+  "backend": "kicad",
+  "backend_version": "0.1",
+  "generated_files": [
+    {
+      "artifact_type": "kicad_schematic",
+      "path": "circuit.kicad_sch",
+      "format": "kicad_sch",
+      "checksum": "5ca6c0ef022a9228f3ecf447e22368c07be042d48921ff03d0dba560d2c80301",
+      "metadata": {
+        "target_version": "9"
+      }
+    },
+    {
+      "artifact_type": "python_circuit_representation",
+      "path": "circuit.py",
+      "format": "python",
+      "checksum": "58f3a9685c9277ac19629435f023185aecd85a46d350233231db9ec1e4024fa8",
+      "metadata": {
+        "canonical_source": "CircuitIR"
+      }
+    },
+    {
+      "artifact_type": "diagnostic_report",
+      "path": "generation_report.json",
+      "format": "json",
+      "checksum": "944a6661f0f0caa1331f458abe4b5782cb3a212d6726e9948b76b5a482a23f06",
+      "metadata": {}
+    },
+    {
+      "artifact_type": "manifest",
+      "path": "artifact_manifest.json",
+      "format": "json",
+      "checksum": null,
+      "metadata": {}
+    }
+  ],
+  "object_mappings": [
+    {
+      "source_object_id": "J_IN_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "71ca0d0d-2b21-59ab-a177-b4d1757c8700",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "J1",
+        "placeholder": true,
+        "lib_id": "SchematicAI:PLACEHOLDER_J_IN_001",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "J_IN_001",
+            "circuit_pin_id": "PIN_J_IN_VIN",
+            "symbol_uuid": "71ca0d0d-2b21-59ab-a177-b4d1757c8700",
+            "kicad_pin_number": "VIN",
+            "position": {
+              "x": 80.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 69.84,
+              "y": 40.08
+            }
+          },
+          {
+            "circuit_instance_id": "J_IN_001",
+            "circuit_pin_id": "PIN_J_IN_GND",
+            "symbol_uuid": "71ca0d0d-2b21-59ab-a177-b4d1757c8700",
+            "kicad_pin_number": "GND",
+            "position": {
+              "x": 80.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 69.84,
+              "y": 37.54
+            }
+          }
+        ],
+        "symbol_source": null
+      }
+    },
+    {
+      "source_object_id": "D_PROT_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "a0743567-4522-50ba-b0a4-564e1ad915ee",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "D1",
+        "placeholder": true,
+        "lib_id": "SchematicAI:PLACEHOLDER_D_PROT_001",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "D_PROT_001",
+            "circuit_pin_id": "PIN_D_PROT_IN",
+            "symbol_uuid": "a0743567-4522-50ba-b0a4-564e1ad915ee",
+            "kicad_pin_number": "IN",
+            "position": {
+              "x": 170.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 159.84,
+              "y": 40.08
+            }
+          },
+          {
+            "circuit_instance_id": "D_PROT_001",
+            "circuit_pin_id": "PIN_D_PROT_OUT",
+            "symbol_uuid": "a0743567-4522-50ba-b0a4-564e1ad915ee",
+            "kicad_pin_number": "OUT",
+            "position": {
+              "x": 170.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 159.84,
+              "y": 37.54
+            }
+          }
+        ],
+        "symbol_source": null
+      }
+    },
+    {
+      "source_object_id": "U_REG_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "6f724dcf-3156-557f-993d-0446bf984b0d",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "U1",
+        "placeholder": true,
+        "lib_id": "SchematicAI:PLACEHOLDER_U_REG_001",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "U_REG_001",
+            "circuit_pin_id": "PIN_U_REG_VIN",
+            "symbol_uuid": "6f724dcf-3156-557f-993d-0446bf984b0d",
+            "kicad_pin_number": "VIN",
+            "position": {
+              "x": 35.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 24.84,
+              "y": 75.08
+            }
+          },
+          {
+            "circuit_instance_id": "U_REG_001",
+            "circuit_pin_id": "PIN_U_REG_SW",
+            "symbol_uuid": "6f724dcf-3156-557f-993d-0446bf984b0d",
+            "kicad_pin_number": "SW",
+            "position": {
+              "x": 35.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 24.84,
+              "y": 72.54
+            }
+          },
+          {
+            "circuit_instance_id": "U_REG_001",
+            "circuit_pin_id": "PIN_U_REG_VOUT",
+            "symbol_uuid": "6f724dcf-3156-557f-993d-0446bf984b0d",
+            "kicad_pin_number": "VOUT",
+            "position": {
+              "x": 35.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 24.84,
+              "y": 70.0
+            }
+          },
+          {
+            "circuit_instance_id": "U_REG_001",
+            "circuit_pin_id": "PIN_U_REG_GND",
+            "symbol_uuid": "6f724dcf-3156-557f-993d-0446bf984b0d",
+            "kicad_pin_number": "GND",
+            "position": {
+              "x": 35.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 24.84,
+              "y": 67.46
+            }
+          },
+          {
+            "circuit_instance_id": "U_REG_001",
+            "circuit_pin_id": "PIN_U_REG_EN",
+            "symbol_uuid": "6f724dcf-3156-557f-993d-0446bf984b0d",
+            "kicad_pin_number": "EN",
+            "position": {
+              "x": 35.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 24.84,
+              "y": 64.92
+            }
+          }
+        ],
+        "symbol_source": null
+      }
+    },
+    {
+      "source_object_id": "C_IN_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "daa74d6a-7064-5b7b-be6c-72fc636cdfff",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "C1",
+        "placeholder": false,
+        "lib_id": "Device:C",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "C_IN_001",
+            "circuit_pin_id": "PIN_C_IN_POS",
+            "symbol_uuid": "daa74d6a-7064-5b7b-be6c-72fc636cdfff",
+            "kicad_pin_number": "1",
+            "position": {
+              "x": 35.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 29.92,
+              "y": 35.0
+            }
+          },
+          {
+            "circuit_instance_id": "C_IN_001",
+            "circuit_pin_id": "PIN_C_IN_NEG",
+            "symbol_uuid": "daa74d6a-7064-5b7b-be6c-72fc636cdfff",
+            "kicad_pin_number": "2",
+            "position": {
+              "x": 35.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 40.08,
+              "y": 35.0
+            }
+          }
+        ],
+        "symbol_source": "C:\\Users\\LENOVO\\Desktop\\Circuit Generator\\examples\\kicad9_symbols\\Device.kicad_sym"
+      }
+    },
+    {
+      "source_object_id": "C_OUT_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "9dcc7d1c-553d-5e88-88b5-1088864a0770",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "C2",
+        "placeholder": true,
+        "lib_id": "SchematicAI:PLACEHOLDER_C_OUT_001",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "C_OUT_001",
+            "circuit_pin_id": "PIN_C_OUT_POS",
+            "symbol_uuid": "9dcc7d1c-553d-5e88-88b5-1088864a0770",
+            "kicad_pin_number": "POS",
+            "position": {
+              "x": 80.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 69.84,
+              "y": 75.08
+            }
+          },
+          {
+            "circuit_instance_id": "C_OUT_001",
+            "circuit_pin_id": "PIN_C_OUT_NEG",
+            "symbol_uuid": "9dcc7d1c-553d-5e88-88b5-1088864a0770",
+            "kicad_pin_number": "NEG",
+            "position": {
+              "x": 80.0,
+              "y": 70.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 69.84,
+              "y": 72.54
+            }
+          }
+        ],
+        "symbol_source": null
+      }
+    },
+    {
+      "source_object_id": "J_OUT_001",
+      "source_object_type": "component_instance",
+      "backend_object_id": "6018447d-c950-5b96-b977-e9031771d96c",
+      "backend_object_type": "kicad_symbol",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "reference_designator": "J2",
+        "placeholder": true,
+        "lib_id": "SchematicAI:PLACEHOLDER_J_OUT_001",
+        "pin_endpoints": [
+          {
+            "circuit_instance_id": "J_OUT_001",
+            "circuit_pin_id": "PIN_J_OUT_5V",
+            "symbol_uuid": "6018447d-c950-5b96-b977-e9031771d96c",
+            "kicad_pin_number": "5V",
+            "position": {
+              "x": 125.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 114.84,
+              "y": 40.08
+            }
+          },
+          {
+            "circuit_instance_id": "J_OUT_001",
+            "circuit_pin_id": "PIN_J_OUT_GND",
+            "symbol_uuid": "6018447d-c950-5b96-b977-e9031771d96c",
+            "kicad_pin_number": "GND",
+            "position": {
+              "x": 125.0,
+              "y": 35.0
+            },
+            "orientation": 0.0,
+            "connection_point": {
+              "x": 114.84,
+              "y": 37.54
+            }
+          }
+        ],
+        "symbol_source": null
+      }
+    },
+    {
+      "source_object_id": "NET_VIN_RAW",
+      "source_object_type": "net",
+      "backend_object_id": "kicad_net_label:NET_VIN_RAW",
+      "backend_object_type": "kicad_label",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "connection_count": 2,
+        "net_label": "NET_VIN_RAW",
+        "display_name": "VIN_RAW"
+      }
+    },
+    {
+      "source_object_id": "NET_VIN_PROTECTED",
+      "source_object_type": "net",
+      "backend_object_id": "kicad_net_label:NET_VIN_PROTECTED",
+      "backend_object_type": "kicad_label",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "connection_count": 3,
+        "net_label": "NET_VIN_PROTECTED",
+        "display_name": "VIN_PROTECTED"
+      }
+    },
+    {
+      "source_object_id": "NET_5V",
+      "source_object_type": "net",
+      "backend_object_id": "kicad_net_label:NET_5V",
+      "backend_object_type": "kicad_label",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "connection_count": 3,
+        "net_label": "NET_5V",
+        "display_name": "5V"
+      }
+    },
+    {
+      "source_object_id": "NET_GND",
+      "source_object_type": "net",
+      "backend_object_id": "kicad_net_label:NET_GND",
+      "backend_object_type": "kicad_label",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "connection_count": 5,
+        "net_label": "NET_GND",
+        "display_name": "GND"
+      }
+    },
+    {
+      "source_object_id": "NET_AGND",
+      "source_object_type": "net",
+      "backend_object_id": "kicad_net_label:NET_AGND",
+      "backend_object_type": "kicad_label",
+      "artifact_type": "kicad_schematic",
+      "metadata": {
+        "connection_count": 0,
+        "net_label": "NET_AGND",
+        "display_name": "AGND"
+      }
+    }
+  ],
+  "placeholders": [
+    {
+      "placeholder_object_id": "PLACEHOLDER_J_IN_001",
+      "source_instance_id": "J_IN_001",
+      "backend_object_id": "71ca0d0d-2b21-59ab-a177-b4d1757c8700",
+      "reference_designator": "J1",
+      "display_value": "UNRESOLVED PLACEHOLDER: input power connector",
+      "unresolved_reason": "component identity is not fully resolved",
+      "pin_ids": [
+        "PIN_J_IN_VIN",
+        "PIN_J_IN_GND"
+      ],
+      "metadata": {
+        "pin_labels": {
+          "PIN_J_IN_VIN": "VIN",
+          "PIN_J_IN_GND": "GND"
+        }
+      }
+    },
+    {
+      "placeholder_object_id": "PLACEHOLDER_D_PROT_001",
+      "source_instance_id": "D_PROT_001",
+      "backend_object_id": "a0743567-4522-50ba-b0a4-564e1ad915ee",
+      "reference_designator": "D1",
+      "display_value": "UNRESOLVED PLACEHOLDER: reverse polarity protection",
+      "unresolved_reason": "component identity is not fully resolved",
+      "pin_ids": [
+        "PIN_D_PROT_IN",
+        "PIN_D_PROT_OUT"
+      ],
+      "metadata": {
+        "pin_labels": {
+          "PIN_D_PROT_IN": "IN",
+          "PIN_D_PROT_OUT": "OUT"
+        }
+      }
+    },
+    {
+      "placeholder_object_id": "PLACEHOLDER_U_REG_001",
+      "source_instance_id": "U_REG_001",
+      "backend_object_id": "6f724dcf-3156-557f-993d-0446bf984b0d",
+      "reference_designator": "U1",
+      "display_value": "UNRESOLVED PLACEHOLDER: main 5v step down converter",
+      "unresolved_reason": "resolved component has no verified KiCad symbol reference",
+      "pin_ids": [
+        "PIN_U_REG_VIN",
+        "PIN_U_REG_SW",
+        "PIN_U_REG_VOUT",
+        "PIN_U_REG_GND",
+        "PIN_U_REG_EN"
+      ],
+      "metadata": {
+        "pin_labels": {
+          "PIN_U_REG_VIN": "VIN",
+          "PIN_U_REG_SW": "SW",
+          "PIN_U_REG_VOUT": "VOUT",
+          "PIN_U_REG_GND": "GND",
+          "PIN_U_REG_EN": "EN"
+        }
+      }
+    },
+    {
+      "placeholder_object_id": "PLACEHOLDER_C_OUT_001",
+      "source_instance_id": "C_OUT_001",
+      "backend_object_id": "9dcc7d1c-553d-5e88-88b5-1088864a0770",
+      "reference_designator": "C2",
+      "display_value": "47 uF",
+      "unresolved_reason": "component identity is not fully resolved",
+      "pin_ids": [
+        "PIN_C_OUT_POS",
+        "PIN_C_OUT_NEG"
+      ],
+      "metadata": {
+        "pin_labels": {
+          "PIN_C_OUT_POS": "POS",
+          "PIN_C_OUT_NEG": "NEG"
+        }
+      }
+    },
+    {
+      "placeholder_object_id": "PLACEHOLDER_J_OUT_001",
+      "source_instance_id": "J_OUT_001",
+      "backend_object_id": "6018447d-c950-5b96-b977-e9031771d96c",
+      "reference_designator": "J2",
+      "display_value": "UNRESOLVED PLACEHOLDER: regulated output connector",
+      "unresolved_reason": "component identity is not fully resolved",
+      "pin_ids": [
+        "PIN_J_OUT_5V",
+        "PIN_J_OUT_GND"
+      ],
+      "metadata": {
+        "pin_labels": {
+          "PIN_J_OUT_5V": "5V",
+          "PIN_J_OUT_GND": "GND"
+        }
+      }
+    }
+  ],
+  "unresolved_objects": [
+    "C_IN_001",
+    "C_OUT_001",
+    "D_PROT_001",
+    "J_IN_001",
+    "J_OUT_001",
+    "U_REG_001"
+  ],
+  "warnings": [
+    {
+      "diagnostic_id": "PLACEHOLDER_GENERATED_J_IN_001",
+      "severity": "info",
+      "category": "placeholder_generated",
+      "message": "component identity is not fully resolved",
+      "source_object_id": "J_IN_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "PLACEHOLDER_GENERATED_D_PROT_001",
+      "severity": "info",
+      "category": "placeholder_generated",
+      "message": "component identity is not fully resolved",
+      "source_object_id": "D_PROT_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "PLACEHOLDER_GENERATED_U_REG_001",
+      "severity": "info",
+      "category": "placeholder_generated",
+      "message": "resolved component has no verified KiCad symbol reference",
+      "source_object_id": "U_REG_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "MISSING_SYMBOL_U_REG_001",
+      "severity": "warning",
+      "category": "missing_symbol",
+      "message": "resolved component has no verified KiCad symbol reference",
+      "source_object_id": "U_REG_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "MISSING_FOOTPRINT_C_IN_001",
+      "severity": "warning",
+      "category": "missing_footprint",
+      "message": "component has no verified footprint reference",
+      "source_object_id": "C_IN_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "PLACEHOLDER_GENERATED_C_OUT_001",
+      "severity": "info",
+      "category": "placeholder_generated",
+      "message": "component identity is not fully resolved",
+      "source_object_id": "C_OUT_001",
+      "backend_object_id": null,
+      "metadata": {}
+    },
+    {
+      "diagnostic_id": "PLACEHOLDER_GENERATED_J_OUT_001",
+      "severity": "info",
+      "category": "placeholder_generated",
+      "message": "component identity is not fully resolved",
+      "source_object_id": "J_OUT_001",
+      "backend_object_id": null,
+      "metadata": {}
+    }
+  ],
+  "errors": [],
+  "generation_status": "partial",
+  "metadata": {
+    "target_version": "9",
+    "round_trip": false,
+    "connectivity": {
+      "NET_VIN_RAW": [
+        {
+          "component_instance_id": "J_IN_001",
+          "pin_id": "PIN_J_IN_VIN",
+          "reference_designator": "J1",
+          "pin_name": "VIN",
+          "pin_number": "1"
+        },
+        {
+          "component_instance_id": "D_PROT_001",
+          "pin_id": "PIN_D_PROT_IN",
+          "reference_designator": "D1",
+          "pin_name": "IN",
+          "pin_number": null
+        }
+      ],
+      "NET_VIN_PROTECTED": [
+        {
+          "component_instance_id": "D_PROT_001",
+          "pin_id": "PIN_D_PROT_OUT",
+          "reference_designator": "D1",
+          "pin_name": "OUT",
+          "pin_number": null
+        },
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_VIN",
+          "reference_designator": "U1",
+          "pin_name": "VIN",
+          "pin_number": "1"
+        },
+        {
+          "component_instance_id": "C_IN_001",
+          "pin_id": "PIN_C_IN_POS",
+          "reference_designator": "C1",
+          "pin_name": "POS",
+          "pin_number": "1"
+        }
+      ],
+      "NET_5V": [
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_VOUT",
+          "reference_designator": "U1",
+          "pin_name": "VOUT",
+          "pin_number": "3"
+        },
+        {
+          "component_instance_id": "C_OUT_001",
+          "pin_id": "PIN_C_OUT_POS",
+          "reference_designator": "C2",
+          "pin_name": "POS",
+          "pin_number": "1"
+        },
+        {
+          "component_instance_id": "J_OUT_001",
+          "pin_id": "PIN_J_OUT_5V",
+          "reference_designator": "J2",
+          "pin_name": "5V",
+          "pin_number": "1"
+        }
+      ],
+      "NET_GND": [
+        {
+          "component_instance_id": "J_IN_001",
+          "pin_id": "PIN_J_IN_GND",
+          "reference_designator": "J1",
+          "pin_name": "GND",
+          "pin_number": "2"
+        },
+        {
+          "component_instance_id": "U_REG_001",
+          "pin_id": "PIN_U_REG_GND",
+          "reference_designator": "U1",
+          "pin_name": "GND",
+          "pin_number": "4"
+        },
+        {
+          "component_instance_id": "C_IN_001",
+          "pin_id": "PIN_C_IN_NEG",
+          "reference_designator": "C1",
+          "pin_name": "NEG",
+          "pin_number": "2"
+        },
+        {
+          "component_instance_id": "C_OUT_001",
+          "pin_id": "PIN_C_OUT_NEG",
+          "reference_designator": "C2",
+          "pin_name": "NEG",
+          "pin_number": "2"
+        },
+        {
+          "component_instance_id": "J_OUT_001",
+          "pin_id": "PIN_J_OUT_GND",
+          "reference_designator": "J2",
+          "pin_name": "GND",
+          "pin_number": "2"
+        }
+      ],
+      "NET_AGND": []
+    },
+    "no_connects": [
+      {
+        "component_instance_id": "U_REG_001",
+        "pin_id": "PIN_U_REG_EN"
+      }
+    ],
+    "unresolved_pins": [
+      {
+        "component_instance_id": "U_REG_001",
+        "pin_id": "PIN_U_REG_SW"
+      }
+    ],
+    "layout": {
+      "C_IN_001": {
+        "x": 35.0,
+        "y": 35.0,
+        "group_id": "CGRP_POWER_PATH_001"
+      },
+      "C_OUT_001": {
+        "x": 80.0,
+        "y": 70.0,
+        "group_id": "CGRP_POWER_PATH_001"
+      },
+      "D_PROT_001": {
+        "x": 170.0,
+        "y": 35.0,
+        "group_id": "CGRP_POWER_PATH_001"
+      },
+      "J_IN_001": {
+        "x": 80.0,
+        "y": 35.0,
+        "group_id": "CGRP_POWER_PATH_001"
+      },
+      "J_OUT_001": {
+        "x": 125.0,
+        "y": 35.0,
+        "group_id": null
+      },
+      "U_REG_001": {
+        "x": 35.0,
+        "y": 70.0,
+        "group_id": "CGRP_POWER_PATH_001"
+      }
+    },
+    "semantic_checks": {
+      "component_count": 6,
+      "net_count": 5,
+      "net_connection_count": 13
+    },
+    "artifact_check": {
+      "valid": true,
+      "component_mismatches": [],
+      "net_mismatches": [],
+      "no_connect_mismatches": [],
+      "refdes_mismatches": [],
+      "value_mismatches": [],
+      "placeholder_mismatches": [],
+      "parse_errors": [],
+      "diagnostics": [],
+      "generated_connectivity": {
+        "NET_VIN_RAW": [
+          "D_PROT_001:PIN_D_PROT_IN",
+          "J_IN_001:PIN_J_IN_VIN"
+        ],
+        "NET_VIN_PROTECTED": [
+          "C_IN_001:PIN_C_IN_POS",
+          "D_PROT_001:PIN_D_PROT_OUT",
+          "U_REG_001:PIN_U_REG_VIN"
+        ],
+        "NET_5V": [
+          "C_OUT_001:PIN_C_OUT_POS",
+          "J_OUT_001:PIN_J_OUT_5V",
+          "U_REG_001:PIN_U_REG_VOUT"
+        ],
+        "NET_GND": [
+          "C_IN_001:PIN_C_IN_NEG",
+          "C_OUT_001:PIN_C_OUT_NEG",
+          "J_IN_001:PIN_J_IN_GND",
+          "J_OUT_001:PIN_J_OUT_GND",
+          "U_REG_001:PIN_U_REG_GND"
+        ],
+        "NET_AGND": []
+      },
+      "expected_connectivity": {
+        "NET_VIN_RAW": [
+          "D_PROT_001:PIN_D_PROT_IN",
+          "J_IN_001:PIN_J_IN_VIN"
+        ],
+        "NET_VIN_PROTECTED": [
+          "C_IN_001:PIN_C_IN_POS",
+          "D_PROT_001:PIN_D_PROT_OUT",
+          "U_REG_001:PIN_U_REG_VIN"
+        ],
+        "NET_5V": [
+          "C_OUT_001:PIN_C_OUT_POS",
+          "J_OUT_001:PIN_J_OUT_5V",
+          "U_REG_001:PIN_U_REG_VOUT"
+        ],
+        "NET_GND": [
+          "C_IN_001:PIN_C_IN_NEG",
+          "C_OUT_001:PIN_C_OUT_NEG",
+          "J_IN_001:PIN_J_IN_GND",
+          "J_OUT_001:PIN_J_OUT_GND",
+          "U_REG_001:PIN_U_REG_GND"
+        ],
+        "NET_AGND": []
+      },
+      "generated_no_connects": [
+        "U_REG_001:PIN_U_REG_EN"
+      ],
+      "expected_no_connects": [
+        "U_REG_001:PIN_U_REG_EN"
+      ]
+    }
+  }
+}

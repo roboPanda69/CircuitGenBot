@@ -1,0 +1,139 @@
+{
+  "artifact_check": {
+    "component_mismatches": [],
+    "diagnostics": [],
+    "expected_connectivity": {
+      "NET_5V": [
+        "C_OUT_001:PIN_C_OUT_POS",
+        "J_OUT_001:PIN_J_OUT_5V",
+        "U_REG_001:PIN_U_REG_VOUT"
+      ],
+      "NET_AGND": [],
+      "NET_GND": [
+        "C_IN_001:PIN_C_IN_NEG",
+        "C_OUT_001:PIN_C_OUT_NEG",
+        "J_IN_001:PIN_J_IN_GND",
+        "J_OUT_001:PIN_J_OUT_GND",
+        "U_REG_001:PIN_U_REG_GND"
+      ],
+      "NET_VIN_PROTECTED": [
+        "C_IN_001:PIN_C_IN_POS",
+        "D_PROT_001:PIN_D_PROT_OUT",
+        "U_REG_001:PIN_U_REG_VIN"
+      ],
+      "NET_VIN_RAW": [
+        "D_PROT_001:PIN_D_PROT_IN",
+        "J_IN_001:PIN_J_IN_VIN"
+      ]
+    },
+    "expected_no_connects": [
+      "U_REG_001:PIN_U_REG_EN"
+    ],
+    "generated_connectivity": {
+      "NET_5V": [
+        "C_OUT_001:PIN_C_OUT_POS",
+        "J_OUT_001:PIN_J_OUT_5V",
+        "U_REG_001:PIN_U_REG_VOUT"
+      ],
+      "NET_AGND": [],
+      "NET_GND": [
+        "C_IN_001:PIN_C_IN_NEG",
+        "C_OUT_001:PIN_C_OUT_NEG",
+        "J_IN_001:PIN_J_IN_GND",
+        "J_OUT_001:PIN_J_OUT_GND",
+        "U_REG_001:PIN_U_REG_GND"
+      ],
+      "NET_VIN_PROTECTED": [
+        "C_IN_001:PIN_C_IN_POS",
+        "D_PROT_001:PIN_D_PROT_OUT",
+        "U_REG_001:PIN_U_REG_VIN"
+      ],
+      "NET_VIN_RAW": [
+        "D_PROT_001:PIN_D_PROT_IN",
+        "J_IN_001:PIN_J_IN_VIN"
+      ]
+    },
+    "generated_no_connects": [
+      "U_REG_001:PIN_U_REG_EN"
+    ],
+    "net_mismatches": [],
+    "no_connect_mismatches": [],
+    "parse_errors": [],
+    "placeholder_mismatches": [],
+    "refdes_mismatches": [],
+    "valid": true,
+    "value_mismatches": []
+  },
+  "backend": "kicad",
+  "diagnostics": [
+    {
+      "backend_object_id": null,
+      "category": "placeholder_generated",
+      "diagnostic_id": "PLACEHOLDER_GENERATED_J_IN_001",
+      "message": "component identity is not fully resolved",
+      "metadata": {},
+      "severity": "info",
+      "source_object_id": "J_IN_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "placeholder_generated",
+      "diagnostic_id": "PLACEHOLDER_GENERATED_D_PROT_001",
+      "message": "component identity is not fully resolved",
+      "metadata": {},
+      "severity": "info",
+      "source_object_id": "D_PROT_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "placeholder_generated",
+      "diagnostic_id": "PLACEHOLDER_GENERATED_U_REG_001",
+      "message": "resolved component has no verified KiCad symbol reference",
+      "metadata": {},
+      "severity": "info",
+      "source_object_id": "U_REG_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "missing_symbol",
+      "diagnostic_id": "MISSING_SYMBOL_U_REG_001",
+      "message": "resolved component has no verified KiCad symbol reference",
+      "metadata": {},
+      "severity": "warning",
+      "source_object_id": "U_REG_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "missing_footprint",
+      "diagnostic_id": "MISSING_FOOTPRINT_C_IN_001",
+      "message": "component has no verified footprint reference",
+      "metadata": {},
+      "severity": "warning",
+      "source_object_id": "C_IN_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "placeholder_generated",
+      "diagnostic_id": "PLACEHOLDER_GENERATED_C_OUT_001",
+      "message": "component identity is not fully resolved",
+      "metadata": {},
+      "severity": "info",
+      "source_object_id": "C_OUT_001"
+    },
+    {
+      "backend_object_id": null,
+      "category": "placeholder_generated",
+      "diagnostic_id": "PLACEHOLDER_GENERATED_J_OUT_001",
+      "message": "component identity is not fully resolved",
+      "metadata": {},
+      "severity": "info",
+      "source_object_id": "J_OUT_001"
+    }
+  ],
+  "semantic_checks": {
+    "component_count": 6,
+    "net_connection_count": 13,
+    "net_count": 5
+  },
+  "status": "partial"
+}
